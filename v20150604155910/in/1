@@ -1,0 +1,15 @@
+files/tweet.fields
+user
+string
+text
+string
+location
+string
+language
+string
+favorite_counter
+int
+retweet_counter
+int
+view_counter
+long
