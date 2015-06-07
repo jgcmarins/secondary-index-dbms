@@ -23,7 +23,7 @@ H=./src/headers
 M=src/main.c
 
 #library
-LIB=src/ArrayList.c src/NumberConverter.c src/StringConverter.c src/TableView.c src/BinaryFile.c src/BinaryFileWriter.c src/BinaryFileReader.c src/Field.c src/FieldHandler.c src/Table.c src/InsertionHandler.c
+LIB=src/ArrayList.c src/NumberConverter.c src/StringConverter.c src/TableView.c src/BinaryFile.c src/BinaryFileWriter.c src/BinaryFileReader.c src/Field.c src/FieldHandler.c src/Table.c src/InsertionHandler.c src/SelectionHandler.c
 
 all: clean compile
 clean:

@@ -8,6 +8,7 @@
 */
 
 #include "headers/InsertionHandler.h"
+#include "headers/SelectionHandler.h"
 
 char *inputReader() {
 	char *buffer = NULL;
@@ -29,8 +30,9 @@ int main(int argc, char *argv[]) {
 	char *fileName = inputReader();
 	Table *t = newTable(fileName);
 	InsertionHandler *ih = newInsertionHandler(t);
+	SelectionHandler *sh = newSelectionHandler(t);
 
-	/*while(1){
+	/*while(1) {
 		char *name = inputReader();
 		if(name[0] == '\0') {
 			free(name);
@@ -42,7 +44,7 @@ int main(int argc, char *argv[]) {
 		addNewField(ih->t->fh, f);
 	}*/
 
-	ArrayList *records = newArrayList();
+	/*ArrayList *records = newArrayList();
 	while(1){
 		char *record = inputReader();
 		if(record[0] == '\0') {
@@ -62,10 +64,39 @@ int main(int argc, char *argv[]) {
 		removeArrayListObjectFromPosition(records, records->length - 1);
 		free(record);
 	}
+	deleteArrayList(records);*/
+
+	ArrayList *records = selectAll(sh);
+	ArrayList *record = getArrayListObject(records, 0);
+
+	printf("\"%s\"\n", (char *) getArrayListObject(record, 0));
+	printf("\"%s\"\n", (char *) getArrayListObject(record, 1));
+	printf("\"%s\"\n", (char *) getArrayListObject(record, 2));
+	printf("\"%s\"\n", (char *) getArrayListObject(record, 3));
+	int *int1 = (int *) getArrayListObject(record, 4);
+	int *int2 = (int *) getArrayListObject(record, 5);
+	long *long1 = (long *) getArrayListObject(record, 6);
+	printf("\"%d\"\n", *int1);
+	printf("\"%d\"\n", *int2);
+	printf("\"%ld\"\n", *long1);
+
+
+	while(record->length > 0) {
+		void *p = getArrayListObject(record, record->length - 1);
+		removeArrayListObjectFromPosition(record, record->length - 1);
+		free(p);
+	}
+
+	while(records->length > 0) {
+		ArrayList *record = (ArrayList *) getArrayListObject(records, records->length - 1);
+		removeArrayListObjectFromPosition(records, records->length - 1);
+		deleteArrayList(record);
+	}
 	deleteArrayList(records);
 
-	displayFields(t);
+	//displayFields(t);
 
+	deleteSelectionHandler(sh);
 	deleteInsertionHandler(ih);
 	deleteTable(t);
 	free(fileName);
