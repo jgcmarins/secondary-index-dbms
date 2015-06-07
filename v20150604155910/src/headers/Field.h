@@ -14,6 +14,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#define INT "int"
+#define LONG "long"
+#define FLOAT "float"
+#define DOUBLE "double"
+#define CHAR "char"
+#define STRING "string"
+
 typedef struct Field {
 	char *name;
 	char *type;

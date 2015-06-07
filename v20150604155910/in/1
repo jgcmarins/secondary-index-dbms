@@ -1,4 +1,4 @@
-files/tweet.fields
+files/tweet
 user
 string
 text

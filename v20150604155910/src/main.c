@@ -7,9 +7,7 @@
 * 
 */
 
-#include "headers/FieldHandler.h"
-#include "headers/TableView.h"
-#include "headers/NumberConverter.h"
+#include "headers/InsertionHandler.h"
 
 char *inputReader() {
 	char *buffer = NULL;
@@ -29,9 +27,8 @@ char *inputReader() {
 int main(int argc, char *argv[]) {
 
 	char *fileName = inputReader();
-	BinaryFile *bf = newBinaryFile(fileName);
-	FieldHandler *fh = newFieldHandler(bf, '|');
-	int i;
+	Table *t = newTable(fileName);
+	InsertionHandler *ih = newInsertionHandler(t);
 
 	/*while(1){
 		char *name = inputReader();
@@ -41,34 +38,36 @@ int main(int argc, char *argv[]) {
 		}
 
 		char *type = inputReader();
-
 		Field *f = newField(name, type);
-		addNewField(fh, f);
+		addNewField(ih->t->fh, f);
 	}*/
 
-	ArrayList *names = newArrayList();
-	ArrayList *types = newArrayList();
-	i = 0;
-	while(i < fh->fields->length) {
-		setArrayListObject(names, (char *) getFieldName(fh, i), i);
-		setArrayListObject(types, (char *) getFieldType(fh, i), i);
-		i++;
+	ArrayList *records = newArrayList();
+	while(1){
+		char *record = inputReader();
+		if(record[0] == '\0') {
+			free(record);
+			break;
+		}
+
+		//printf("\"%s\"\n", record);
+
+		setArrayListObject(records, (char *) record, records->length);
 	}
 
-	TableView *tv = newTableView(names);
-	printTableHeader(tv);
-	printTableRow(tv, types);
+	insert(ih, records);
 
-	while(names->length > 0) removeArrayListObjectFromPosition(names, names->length - 1);
-	deleteArrayList(names);
+	while(records->length > 0) {
+		char *record = getArrayListObject(records, records->length - 1);
+		removeArrayListObjectFromPosition(records, records->length - 1);
+		free(record);
+	}
+	deleteArrayList(records);
 
-	while(types->length > 0) removeArrayListObjectFromPosition(types, types->length - 1);
-	deleteArrayList(types);
+	displayFields(t);
 
-	deleteTableView(tv);
-
-	deleteFieldHandler(fh);
-	deleteBinaryFile(bf);
+	deleteInsertionHandler(ih);
+	deleteTable(t);
 	free(fileName);
 
 	return 0;

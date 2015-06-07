@@ -7,8 +7,8 @@
 * 
 */
 
-#ifndef _TABLE_H_
-#define _TABLE_H_
+#ifndef _TABLEVIEW_H_
+#define _TABLEVIEW_H_
 
 #include "ArrayList.h"
 #include <string.h>
