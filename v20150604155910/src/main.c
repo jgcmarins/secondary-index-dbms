@@ -67,24 +67,28 @@ int main(int argc, char *argv[]) {
 	deleteArrayList(records);*/
 
 	ArrayList *records = selectAll(sh);
-	ArrayList *record = getArrayListObject(records, 0);
+	int i = 0;
+	while(i < records->length) {
+		ArrayList *record = getArrayListObject(records, i);
 
-	printf("\"%s\"\n", (char *) getArrayListObject(record, 0));
-	printf("\"%s\"\n", (char *) getArrayListObject(record, 1));
-	printf("\"%s\"\n", (char *) getArrayListObject(record, 2));
-	printf("\"%s\"\n", (char *) getArrayListObject(record, 3));
-	int *int1 = (int *) getArrayListObject(record, 4);
-	int *int2 = (int *) getArrayListObject(record, 5);
-	long *long1 = (long *) getArrayListObject(record, 6);
-	printf("\"%d\"\n", *int1);
-	printf("\"%d\"\n", *int2);
-	printf("\"%ld\"\n", *long1);
+		printf("\"%s\"\n", (char *) getArrayListObject(record, 0));
+		printf("\"%s\"\n", (char *) getArrayListObject(record, 1));
+		printf("\"%s\"\n", (char *) getArrayListObject(record, 2));
+		printf("\"%s\"\n", (char *) getArrayListObject(record, 3));
+		int *int1 = (int *) getArrayListObject(record, 4);
+		int *int2 = (int *) getArrayListObject(record, 5);
+		long *long1 = (long *) getArrayListObject(record, 6);
+		printf("\"%d\"\n", *int1);
+		printf("\"%d\"\n", *int2);
+		printf("\"%ld\"\n", *long1);
 
 
-	while(record->length > 0) {
-		void *p = getArrayListObject(record, record->length - 1);
-		removeArrayListObjectFromPosition(record, record->length - 1);
-		free(p);
+		while(record->length > 0) {
+			void *p = getArrayListObject(record, record->length - 1);
+			removeArrayListObjectFromPosition(record, record->length - 1);
+			free(p);
+		}
+		i++;
 	}
 
 	while(records->length > 0) {
