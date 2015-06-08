@@ -1,1 +1,1 @@
-user|string|text|string|location|string|language|string|favorite_counter|int|retweet_counter|int|view_counter|long|
+user|string|secondary key|text|string|normal key|location|string|secondary key|language|string|secondary key|favorite_counter|int|secondary key|retweet_counter|int|normal key|view_counter|long|normal key|

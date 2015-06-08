@@ -40,7 +40,8 @@ int main(int argc, char *argv[]) {
 		}
 
 		char *type = inputReader();
-		Field *f = newField(name, type);
+		char *key = inputReader();
+		Field *f = newField(name, type, key);
 		addNewField(ih->t->fh, f);
 	}*/
 
@@ -98,7 +99,7 @@ int main(int argc, char *argv[]) {
 	}
 	deleteArrayList(records);
 
-	//displayFields(t);
+	displayFields(t);
 
 	deleteSelectionHandler(sh);
 	deleteInsertionHandler(ih);

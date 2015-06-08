@@ -1,15 +1,22 @@
 files/tweet
 user
 string
+secondary key
 text
 string
+normal key
 location
 string
+secondary key
 language
 string
+secondary key
 favorite_counter
 int
+secondary key
 retweet_counter
 int
+normal key
 view_counter
 long
+normal key

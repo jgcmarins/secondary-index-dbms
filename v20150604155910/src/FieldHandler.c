@@ -44,8 +44,9 @@ void buildFieldHandler(FieldHandler *fh) {
 		while(fh->bfr->bf->currentOffset < getBinaryFileSize(fh->bfr->bf)) {
 			char *name = readString(fh->bfr, fh->bfr->bf->currentOffset);
 			char *type = readString(fh->bfr, fh->bfr->bf->currentOffset);
+			char *key = readString(fh->bfr, fh->bfr->bf->currentOffset);
 
-			Field *f = newField(name, type);
+			Field *f = newField(name, type, key);
 			setArrayListObject(fh->fields, (Field *) f, fh->fields->length);
 			fh->numberOfFields = fh->fields->length;
 		}
@@ -57,6 +58,7 @@ void addNewField(FieldHandler *fh, Field *f) {
 	fh->numberOfFields = fh->fields->length;
 	writeString(fh->bfw, f->name, getBinaryFileSize(fh->bfw->bf));
 	writeString(fh->bfw, f->type, getBinaryFileSize(fh->bfw->bf));
+	writeString(fh->bfw, f->key, getBinaryFileSize(fh->bfw->bf));
 }
 
 Field *getField(FieldHandler *fh, int position) {
@@ -72,4 +74,9 @@ char *getFieldName(FieldHandler *fh, int position) {
 char *getFieldType(FieldHandler *fh, int position) {
 	Field *f = (Field *) getArrayListObject(fh->fields, position);
 	return f->type;
+}
+
+char *getFieldKey(FieldHandler *fh, int position) {
+	Field *f = (Field *) getArrayListObject(fh->fields, position);
+	return f->key;
 }

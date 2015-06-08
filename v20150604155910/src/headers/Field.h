@@ -21,12 +21,17 @@
 #define CHAR "char"
 #define STRING "string"
 
+#define NORMAL "normal key"
+#define PRIMARY "primary key"
+#define SECONDARY "secondary key"
+
 typedef struct Field {
 	char *name;
 	char *type;
+	char *key;
 } Field;
 
-Field *newField(char *name, char *type);
+Field *newField(char *name, char *type, char *key);
 
 void deleteField(Field *f);
 

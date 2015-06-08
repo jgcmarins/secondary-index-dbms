@@ -47,21 +47,27 @@ BinaryFile *getTableFile(Table *t) {
 void displayFields(Table *t) {
 	ArrayList *names = newArrayList();
 	ArrayList *types = newArrayList();
+	ArrayList *keys = newArrayList();
 	int i;
 	for(i = 0 ; i < t->fh->fields->length ; i++) {
 		setArrayListObject(names, (char *) getFieldName(t->fh, i), i);
 		setArrayListObject(types, (char *) getFieldType(t->fh, i), i);
+		setArrayListObject(keys, (char *) getFieldKey(t->fh, i), i);
 	}
 
 	TableView *tv = newTableView(names);
 	printTableHeader(tv);
 	printTableRow(tv, types);
+	printTableRow(tv, keys);
 
 	while(names->length > 0) removeArrayListObjectFromPosition(names, names->length - 1);
 	deleteArrayList(names);
 
 	while(types->length > 0) removeArrayListObjectFromPosition(types, types->length - 1);
 	deleteArrayList(types);
+
+	while(keys->length > 0) removeArrayListObjectFromPosition(keys, keys->length - 1);
+	deleteArrayList(keys);
 
 	deleteTableView(tv);
 }

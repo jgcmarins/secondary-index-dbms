@@ -36,4 +36,6 @@ char *getFieldName(FieldHandler *fh, int position);
 
 char *getFieldType(FieldHandler *fh, int position);
 
+char *getFieldKey(FieldHandler *fh, int position);
+
 #endif
