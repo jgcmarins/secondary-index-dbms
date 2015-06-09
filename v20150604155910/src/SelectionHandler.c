@@ -28,37 +28,42 @@ void deleteSelectionHandler(SelectionHandler *sh) {
 ArrayList *selectAll(SelectionHandler *sh) {
 	long fileSize = getBinaryFileSize(getTableFile(sh->t));
 	seekBinaryFile(getTableFile(sh->t), 0L);
-	int i;
 	ArrayList *records = newArrayList();
 	while(getStreamOffset(getTableFile(sh->t)) < fileSize) {
-		ArrayList *record = newArrayList();
-		for(i = 0 ; i < sh->t->fh->numberOfFields ; i++) {
-			char *type = getFieldType(sh->t->fh, i);
-			//printf("type: \"%s\"\n", type);
-			if(!strcmp(type, INT)) {
-				int *p = selectInt(sh);
-				setArrayListObject(record, (int *) p, record->length);
-			} else if(!strcmp(type, LONG)) {
-				long *p = selectLong(sh);
-				setArrayListObject(record, (long *) p, record->length);
-			} else if(!strcmp(type, FLOAT)) {
-				float *p = selectFloat(sh);
-				setArrayListObject(record, (float *) p, record->length);
-			} else if(!strcmp(type, DOUBLE)) {
-				double *p = selectDouble(sh);
-				setArrayListObject(record, (double *) p, record->length);
-			} else if(!strcmp(type, CHAR)) {
-				char *character = selectChar(sh);
-				setArrayListObject(record, (char *) character, record->length);
-			} else if(!strcmp(type, STRING)) {
-				char *string = selectString(sh);
-				setArrayListObject(record, (char *) string, record->length);
-			}
-		}
-		//printf("\n");
+		ArrayList *record = selectByOffset(sh, getStreamOffset(getTableFile(sh->t)));
 		setArrayListObject(records, (ArrayList *) record, records->length);
 	}
 	return records;
+}
+
+ArrayList *selectByOffset(SelectionHandler *sh, long offset) {
+	seekBinaryFile(getTableFile(sh->t), offset);
+	ArrayList *record = newArrayList();
+	int i;
+	for(i = 0 ; i < sh->t->fh->numberOfFields ; i++) {
+		char *type = getFieldType(sh->t->fh, i);
+			//printf("type: \"%s\"\n", type);
+		if(!strcmp(type, INT)) {
+			int *p = selectInt(sh);
+			setArrayListObject(record, (int *) p, record->length);
+		} else if(!strcmp(type, LONG)) {
+			long *p = selectLong(sh);
+			setArrayListObject(record, (long *) p, record->length);
+		} else if(!strcmp(type, FLOAT)) {
+			float *p = selectFloat(sh);
+			setArrayListObject(record, (float *) p, record->length);
+		} else if(!strcmp(type, DOUBLE)) {
+			double *p = selectDouble(sh);
+			setArrayListObject(record, (double *) p, record->length);
+		} else if(!strcmp(type, CHAR)) {
+			char *character = selectChar(sh);
+			setArrayListObject(record, (char *) character, record->length);
+		} else if(!strcmp(type, STRING)) {
+			char *string = selectString(sh);
+			setArrayListObject(record, (char *) string, record->length);
+		}
+	}
+	return record;
 }
 
 int *selectInt(SelectionHandler *sh) {

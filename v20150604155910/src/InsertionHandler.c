@@ -25,8 +25,9 @@ void deleteInsertionHandler(InsertionHandler *ih) {
 	if(ih != NULL) free(ih);
 }
 
-void insert(InsertionHandler *ih, ArrayList *records) {
-	long offset = getBinaryFileSize(ih->t->tableFile);
+long insert(InsertionHandler *ih, ArrayList *records) {
+	long offset = findBestFit(ih, records);
+	long recordOffset = offset;
 	int i;
 	for(i = 0 ; i < records->length ; i++) {
 		char *type = getFieldType(ih->t->fh, i);
@@ -39,6 +40,7 @@ void insert(InsertionHandler *ih, ArrayList *records) {
 		else if(!strcmp(type, STRING)) offset = insertString(ih, (char *) getArrayListObject(records, i), offset);
 		//printf("\n");
 	}
+	return recordOffset;
 }
 
 long insertInt(InsertionHandler *ih, char *record, long offset) {
@@ -82,8 +84,8 @@ long insertString(InsertionHandler *ih, char *record, long offset) {
 	return offset += (strlen(record) + 1);
 }
 
-int findBestFit(InsertionHandler *ih, ArrayList *records) {
-	return 0;
+long findBestFit(InsertionHandler *ih, ArrayList *records) {
+	return getBinaryFileSize(ih->t->tableFile);
 }
 
 int calculateRecordSize(InsertionHandler *ih, ArrayList *records) {

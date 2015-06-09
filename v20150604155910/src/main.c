@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 	}*/
 
 	/*ArrayList *records = newArrayList();
-	while(1){
+	while(1) {
 		char *record = inputReader();
 		if(record[0] == '\0') {
 			free(record);
@@ -58,7 +58,8 @@ int main(int argc, char *argv[]) {
 		setArrayListObject(records, (char *) record, records->length);
 	}
 
-	insert(ih, records);
+	long offset = insert(ih, records);
+	printf("%ld\n", offset);
 
 	while(records->length > 0) {
 		char *record = getArrayListObject(records, records->length - 1);
@@ -67,10 +68,10 @@ int main(int argc, char *argv[]) {
 	}
 	deleteArrayList(records);*/
 
-	ArrayList *records = selectAll(sh);
+	/*ArrayList *records = selectAll(sh);
 	int i = 0;
-	while(i < records->length) {
-		ArrayList *record = getArrayListObject(records, i);
+	while(i < records->length) {*/
+		ArrayList *record = selectByOffset(sh, 67L);//getArrayListObject(records, i);
 
 		printf("\"%s\"\n", (char *) getArrayListObject(record, 0));
 		printf("\"%s\"\n", (char *) getArrayListObject(record, 1));
@@ -89,15 +90,16 @@ int main(int argc, char *argv[]) {
 			removeArrayListObjectFromPosition(record, record->length - 1);
 			free(p);
 		}
-		i++;
-	}
+		deleteArrayList(record);
+		//i++;
+	/*}
 
 	while(records->length > 0) {
 		ArrayList *record = (ArrayList *) getArrayListObject(records, records->length - 1);
 		removeArrayListObjectFromPosition(records, records->length - 1);
 		deleteArrayList(record);
 	}
-	deleteArrayList(records);
+	deleteArrayList(records);*/
 
 	displayFields(t);
 

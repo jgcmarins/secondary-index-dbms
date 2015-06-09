@@ -22,7 +22,7 @@ InsertionHandler *newInsertionHandler(Table *t);
 
 void deleteInsertionHandler(InsertionHandler *ih);
 
-void insert(InsertionHandler *ih, ArrayList *records);
+long insert(InsertionHandler *ih, ArrayList *records);
 
 long insertInt(InsertionHandler *ih, char *record, long offset);
 
@@ -36,7 +36,7 @@ long insertChar(InsertionHandler *ih, char *record, long offset);
 
 long insertString(InsertionHandler *ih, char *record, long offset);
 
-int findBestFit(InsertionHandler *ih, ArrayList *records);
+long findBestFit(InsertionHandler *ih, ArrayList *records);
 
 int calculateRecordSize(InsertionHandler *ih, ArrayList *records);
 
