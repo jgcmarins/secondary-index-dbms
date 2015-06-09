@@ -38,4 +38,6 @@ BinaryFile *getTableFile(Table *t);
 
 void displayFields(Table *t);
 
+ArrayList *rowToString(Table *t, ArrayList *row);
+
 #endif

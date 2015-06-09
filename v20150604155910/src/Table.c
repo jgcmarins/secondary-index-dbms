@@ -71,3 +71,41 @@ void displayFields(Table *t) {
 
 	deleteTableView(tv);
 }
+
+ArrayList *rowToString(Table *t, ArrayList *row) {
+	ArrayList *strings = newArrayList();
+	int i;
+	for(i = 0 ; i < row->length ; i++) {
+		char *type = getFieldType(t->fh, i);
+		if(!strcmp(type, INT)) {
+			int *p = (int *) getArrayListObject(row, i);
+			char *string = intToString(*p);
+			setArrayListObject(strings, (char *) string, strings->length);
+		} else if(!strcmp(type, LONG)) {
+			long *p = (long *) getArrayListObject(row, i);
+			char *string = longToString(*p);
+			setArrayListObject(strings, (char *) string, strings->length);
+		} else if(!strcmp(type, FLOAT)) {
+			float *p = (float *) getArrayListObject(row, i);
+			char *string = floatToString(*p);
+			setArrayListObject(strings, (char *) string, strings->length);
+		} else if(!strcmp(type, DOUBLE)) {
+			double *p = (double *) getArrayListObject(row, i);
+			char *string = doubleToString(*p);
+			setArrayListObject(strings, (char *) string, strings->length);
+		} else if(!strcmp(type, CHAR)) {
+			char *p = (char *) getArrayListObject(row, i);
+			char *string = (char *) malloc(sizeof(char)*(strlen(p) + 1));
+			memcpy(string, p, sizeof(char)*(strlen(p)));
+			string[strlen(p)] = '\0';
+			setArrayListObject(strings, (char *) string, strings->length);
+		} else if(!strcmp(type, STRING)) {
+			char *p = (char *) getArrayListObject(row, i);
+			char *string = (char *) malloc(sizeof(char)*(strlen(p) + 1));
+			memcpy(string, p, sizeof(char)*(strlen(p)));
+			string[strlen(p)] = '\0';
+			setArrayListObject(strings, (char *) string, strings->length);
+		}
+	}
+	return strings;
+}

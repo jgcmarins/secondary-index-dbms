@@ -9,6 +9,8 @@
 
 #include "headers/InsertionHandler.h"
 #include "headers/SelectionHandler.h"
+#include "headers/SecondaryIndex.h"
+#include "headers/PointersComparator.h"
 
 char *inputReader() {
 	char *buffer = NULL;
@@ -25,14 +27,8 @@ char *inputReader() {
 	return buffer;
 }
 
-int main(int argc, char *argv[]) {
-
-	char *fileName = inputReader();
-	Table *t = newTable(fileName);
-	InsertionHandler *ih = newInsertionHandler(t);
-	SelectionHandler *sh = newSelectionHandler(t);
-
-	/*while(1) {
+void insertFields(InsertionHandler *ih) {
+	while(1) {
 		char *name = inputReader();
 		if(name[0] == '\0') {
 			free(name);
@@ -43,65 +39,93 @@ int main(int argc, char *argv[]) {
 		char *key = inputReader();
 		Field *f = newField(name, type, key);
 		addNewField(ih->t->fh, f);
-	}*/
+	}
+}
 
-	/*ArrayList *records = newArrayList();
+void insertRecord(InsertionHandler *ih) {
+	ArrayList *record = newArrayList();
 	while(1) {
-		char *record = inputReader();
-		if(record[0] == '\0') {
-			free(record);
+		char *input = inputReader();
+		if(input[0] == '\0') {
+			free(input);
 			break;
 		}
 
-		//printf("\"%s\"\n", record);
 
-		setArrayListObject(records, (char *) record, records->length);
+		setArrayListObject(record, (char *) input, record->length);
 	}
 
-	long offset = insert(ih, records);
+	long offset = insert(ih, record);
 	printf("%ld\n", offset);
 
-	while(records->length > 0) {
-		char *record = getArrayListObject(records, records->length - 1);
-		removeArrayListObjectFromPosition(records, records->length - 1);
-		free(record);
+	while(record->length > 0) {
+		char *field = getArrayListObject(record, record->length - 1);
+		removeArrayListObjectFromPosition(record, record->length - 1);
+		free(field);
 	}
-	deleteArrayList(records);*/
+	deleteArrayList(record);
+}
 
-	/*ArrayList *records = selectAll(sh);
-	int i = 0;
-	while(i < records->length) {*/
-		ArrayList *record = selectByOffset(sh, 67L);//getArrayListObject(records, i);
+void printRecords(SelectionHandler *sh) {
+	ArrayList *names = newArrayList();
+	int i;
+	for(i = 0 ; i < sh->t->fh->fields->length ; i++)
+		setArrayListObject(names, (char *) getFieldName(sh->t->fh, i), i);
+	TableView *tv = newTableView(names);
+	printTableHeader(tv);
 
-		printf("\"%s\"\n", (char *) getArrayListObject(record, 0));
-		printf("\"%s\"\n", (char *) getArrayListObject(record, 1));
-		printf("\"%s\"\n", (char *) getArrayListObject(record, 2));
-		printf("\"%s\"\n", (char *) getArrayListObject(record, 3));
-		int *int1 = (int *) getArrayListObject(record, 4);
-		int *int2 = (int *) getArrayListObject(record, 5);
-		long *long1 = (long *) getArrayListObject(record, 6);
-		printf("\"%d\"\n", *int1);
-		printf("\"%d\"\n", *int2);
-		printf("\"%ld\"\n", *long1);
 
+	ArrayList *records = selectAll(sh);
+	i = 0;
+	while(i < records->length) {
+		ArrayList *record = getArrayListObject(records, i);
+
+		ArrayList *strings = rowToString(sh->t, record);
+
+		printTableRow(tv, strings);
+
+		while(strings->length > 0) {
+			void *p = getArrayListObject(strings, strings->length - 1);
+			removeArrayListObjectFromPosition(strings, strings->length - 1);
+			free(p);
+		}
+		deleteArrayList(strings);
 
 		while(record->length > 0) {
 			void *p = getArrayListObject(record, record->length - 1);
 			removeArrayListObjectFromPosition(record, record->length - 1);
 			free(p);
 		}
-		deleteArrayList(record);
-		//i++;
-	/*}
+		i++;
+	}
 
 	while(records->length > 0) {
 		ArrayList *record = (ArrayList *) getArrayListObject(records, records->length - 1);
 		removeArrayListObjectFromPosition(records, records->length - 1);
 		deleteArrayList(record);
 	}
-	deleteArrayList(records);*/
+	deleteArrayList(records);
+
+	while(names->length > 0) removeArrayListObjectFromPosition(names, names->length - 1);
+	deleteArrayList(names);
+
+	deleteTableView(tv);
+}
+
+int main(int argc, char *argv[]) {
+
+	char *fileName = inputReader();
+	Table *t = newTable(fileName);
+	InsertionHandler *ih = newInsertionHandler(t);
+	SelectionHandler *sh = newSelectionHandler(t);
+
+	/*insertFields(ih);
 
 	displayFields(t);
+
+	insertRecord(ih);*/
+
+	printRecords(sh);
 
 	deleteSelectionHandler(sh);
 	deleteInsertionHandler(ih);
