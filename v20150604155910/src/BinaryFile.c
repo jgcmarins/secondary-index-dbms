@@ -14,7 +14,6 @@ BinaryFile *newBinaryFile(char *fileName) {
 	bf->stream = NULL;
 	bf->fileName = fileName;
 	bf->fileSize = 0L;
-	bf->currentOffset = 0L;
 
 	openBinaryFile(bf);
 
@@ -33,12 +32,14 @@ void openBinaryFile(BinaryFile *bf) {
 		bf->stream = fopen((const char *) bf->fileName, "w+b");
 		if(bf->stream == NULL) exit(1); //error 1
 	}
+	updateBinaryFileSize(bf);
 }
 
 void updateBinaryFileSize(BinaryFile *bf) {
+	long current = getStreamOffset(bf);
 	fseek(bf->stream, 0L, SEEK_END);
-	bf->fileSize = ftell(bf->stream);
-	rewind(bf->stream);
+	bf->fileSize = getStreamOffset(bf);
+	seekBinaryFile(bf, current);
 }
 
 void seekBinaryFile(BinaryFile *bf, long offset) {

@@ -25,22 +25,22 @@ void deleteInsertionHandler(InsertionHandler *ih) {
 	if(ih != NULL) free(ih);
 }
 
-long insert(InsertionHandler *ih, ArrayList *records) {
-	long offset = findBestFit(ih, records);
-	long recordOffset = offset;
+void insert(InsertionHandler *ih, ArrayList *record) {
+	long offset = findBestFit(ih, record);
+	writeInt(ih->bfw, calculateRecordSize(ih, record), offset);
+	offset += sizeof(int);
 	int i;
-	for(i = 0 ; i < records->length ; i++) {
+	for(i = 0 ; i < record->length ; i++) {
 		char *type = getFieldType(ih->t->fh, i);
 		//printf("type: \"%s\"\n", type);
-		if(!strcmp(type, INT)) offset = insertInt(ih, (char *) getArrayListObject(records, i), offset);
-		else if(!strcmp(type, LONG)) offset = insertLong(ih, (char *) getArrayListObject(records, i), offset);
-		else if(!strcmp(type, FLOAT)) offset = insertFloat(ih, (char *) getArrayListObject(records, i), offset);
-		else if(!strcmp(type, DOUBLE)) offset = insertDouble(ih, (char *) getArrayListObject(records, i), offset);
-		else if(!strcmp(type, CHAR)) offset = insertChar(ih, (char *) getArrayListObject(records, i), offset);
-		else if(!strcmp(type, STRING)) offset = insertString(ih, (char *) getArrayListObject(records, i), offset);
+		if(!strcmp(type, INT)) offset = insertInt(ih, (char *) getArrayListObject(record, i), offset);
+		else if(!strcmp(type, LONG)) offset = insertLong(ih, (char *) getArrayListObject(record, i), offset);
+		else if(!strcmp(type, FLOAT)) offset = insertFloat(ih, (char *) getArrayListObject(record, i), offset);
+		else if(!strcmp(type, DOUBLE)) offset = insertDouble(ih, (char *) getArrayListObject(record, i), offset);
+		else if(!strcmp(type, CHAR)) offset = insertChar(ih, (char *) getArrayListObject(record, i), offset);
+		else if(!strcmp(type, STRING)) offset = insertString(ih, (char *) getArrayListObject(record, i), offset);
 		//printf("\n");
 	}
-	return recordOffset;
 }
 
 long insertInt(InsertionHandler *ih, char *record, long offset) {
@@ -84,10 +84,20 @@ long insertString(InsertionHandler *ih, char *record, long offset) {
 	return offset += (strlen(record) + 1);
 }
 
-long findBestFit(InsertionHandler *ih, ArrayList *records) {
+long findBestFit(InsertionHandler *ih, ArrayList *record) {
 	return getBinaryFileSize(ih->t->tableFile);
 }
 
-int calculateRecordSize(InsertionHandler *ih, ArrayList *records) {
-	return 0;
+int calculateRecordSize(InsertionHandler *ih, ArrayList *record) {
+	int i, size = 0;
+	for(i = 0 ; i < record->length ; i++) {
+		char *type = getFieldType(ih->t->fh, i);
+		if(!strcmp(type, INT)) size += sizeof(int);
+		else if(!strcmp(type, LONG)) size += sizeof(long);
+		else if(!strcmp(type, FLOAT)) size += sizeof(float);
+		else if(!strcmp(type, DOUBLE)) size += sizeof(double);
+		else if(!strcmp(type, CHAR)) size += sizeof(char);
+		else if(!strcmp(type, STRING)) size += (sizeof(char)*(strlen((char *) getArrayListObject(record, i))));
+	}
+	return size;
 }

@@ -13,12 +13,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define NO_NEXT -1
+
 typedef struct SecondaryIndex {
 	void *value;
-	long offset;
+	long recordOffset;
+	long nextOffset;
 } SecondaryIndex;
 
-SecondaryIndex *newSecondaryIndex(void *value, long offset);
+SecondaryIndex *newSecondaryIndex(void *value, long recordOffset);
 
 void deleteSecondaryIndex(SecondaryIndex *si);
 

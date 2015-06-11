@@ -37,7 +37,7 @@ void setLengths(TableView *tv) {
 	while(tv->columnsLength->length < tv->columnsNames->length) {
 		char *columnName = (char *) getArrayListObject(tv->columnsNames, tv->columnsLength->length);
 		int length = strlen(columnName);
-		length += 2*(strlen(SPACE));
+		length += (2*(strlen(SPACE)));
 		int *p = (int *) malloc(sizeof(int));
 		memcpy(p, &length, sizeof(int));
 		setArrayListObject(tv->columnsLength, (int *) p, tv->columnsLength->length);

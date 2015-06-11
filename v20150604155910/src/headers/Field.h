@@ -21,9 +21,9 @@
 #define CHAR "char"
 #define STRING "string"
 
-#define NORMAL "normal key"
-#define PRIMARY "primary key"
-#define SECONDARY "secondary key"
+#define NORMAL_KEY "normal key"
+#define PRIMARY_KEY "primary key"
+#define SECONDARY_KEY "secondary key"
 
 typedef struct Field {
 	char *name;

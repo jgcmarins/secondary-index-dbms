@@ -51,12 +51,10 @@ void insertRecord(InsertionHandler *ih) {
 			break;
 		}
 
-
 		setArrayListObject(record, (char *) input, record->length);
 	}
 
-	long offset = insert(ih, record);
-	printf("%ld\n", offset);
+	insert(ih, record);
 
 	while(record->length > 0) {
 		char *field = getArrayListObject(record, record->length - 1);
@@ -73,7 +71,6 @@ void printRecords(SelectionHandler *sh) {
 		setArrayListObject(names, (char *) getFieldName(sh->t->fh, i), i);
 	TableView *tv = newTableView(names);
 	printTableHeader(tv);
-
 
 	ArrayList *records = selectAll(sh);
 	i = 0;
@@ -119,11 +116,11 @@ int main(int argc, char *argv[]) {
 	InsertionHandler *ih = newInsertionHandler(t);
 	SelectionHandler *sh = newSelectionHandler(t);
 
-	/*insertFields(ih);
+	//insertFields(ih);
 
-	displayFields(t);
+	//displayFields(t);
 
-	insertRecord(ih);*/
+	//insertRecord(ih);
 
 	printRecords(sh);
 

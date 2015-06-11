@@ -9,10 +9,11 @@
 
 #include "headers/SecondaryIndex.h"
 
-SecondaryIndex *newSecondaryIndex(void *value, long offset) {
+SecondaryIndex *newSecondaryIndex(void *value, long recordOffset) {
 	SecondaryIndex *si = (SecondaryIndex *) malloc(sizeof(SecondaryIndex));
 	si->value = value;
-	si->offset = offset;
+	si->recordOffset = recordOffset;
+	si->nextOffset = NO_NEXT;
 	return si;
 }
 

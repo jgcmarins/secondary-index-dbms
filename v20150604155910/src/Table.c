@@ -12,13 +12,13 @@
 Table *newTable(char *fileName) {
 	Table *t = (Table *) malloc(sizeof(Table));
 
-	t->tableFileName = buildExtension(fileName, TABLE);
-	t->fieldsFileName = buildExtension(fileName, FIELDS);
+	t->tableFileName = buildNameToTableFiles(fileName, TABLE);
+	t->fieldsFileName = buildNameToTableFiles(fileName, FIELDS);
 
 	t->tableFile = newBinaryFile(t->tableFileName);
 	t->fieldsFile = newBinaryFile(t->fieldsFileName);
 
-	t->fh = newFieldHandler(t->fieldsFile, DELIMITER);
+	t->fh = newFieldHandler(t->fieldsFile);
 
 	return t;
 }
@@ -32,7 +32,7 @@ void deleteTable(Table *t) {
 	if(t != NULL) free(t);
 }
 
-char *buildExtension(char *fileName, const char *extension) { // tenso
+char *buildNameToTableFiles(char *fileName, const char *extension) { // tenso
 	char *string = (char *) malloc(sizeof(char)*(strlen(fileName) + strlen(extension) + 1));
 	memcpy(string, fileName, sizeof(char)*(strlen(fileName)));
 	string[strlen(fileName)] = '\0';
@@ -78,20 +78,16 @@ ArrayList *rowToString(Table *t, ArrayList *row) {
 	for(i = 0 ; i < row->length ; i++) {
 		char *type = getFieldType(t->fh, i);
 		if(!strcmp(type, INT)) {
-			int *p = (int *) getArrayListObject(row, i);
-			char *string = intToString(*p);
+			char *string = intToString(*((int *) getArrayListObject(row, i)));
 			setArrayListObject(strings, (char *) string, strings->length);
 		} else if(!strcmp(type, LONG)) {
-			long *p = (long *) getArrayListObject(row, i);
-			char *string = longToString(*p);
+			char *string = longToString(*((long *) getArrayListObject(row, i)));
 			setArrayListObject(strings, (char *) string, strings->length);
 		} else if(!strcmp(type, FLOAT)) {
-			float *p = (float *) getArrayListObject(row, i);
-			char *string = floatToString(*p);
+			char *string = floatToString(*((float *) getArrayListObject(row, i)));
 			setArrayListObject(strings, (char *) string, strings->length);
 		} else if(!strcmp(type, DOUBLE)) {
-			double *p = (double *) getArrayListObject(row, i);
-			char *string = doubleToString(*p);
+			char *string = doubleToString(*((double *) getArrayListObject(row, i)));
 			setArrayListObject(strings, (char *) string, strings->length);
 		} else if(!strcmp(type, CHAR)) {
 			char *p = (char *) getArrayListObject(row, i);

@@ -9,12 +9,11 @@
 
 #include "headers/FieldHandler.h"
 
-FieldHandler *newFieldHandler(BinaryFile *bf, char delimiter) {
+FieldHandler *newFieldHandler(BinaryFile *bf) {
 	FieldHandler *fh = (FieldHandler *) malloc(sizeof(FieldHandler));
-	fh->bfw = newBinaryFileWriter(bf, delimiter);
-	fh->bfr = newBinaryFileReader(bf, delimiter);
+	fh->bfw = newBinaryFileWriter(bf, DELIMITER);
+	fh->bfr = newBinaryFileReader(bf, DELIMITER);
 	fh->fields = newArrayList();
-	fh->numberOfFields = fh->fields->length;
 
 	buildFieldHandler(fh);
 
@@ -40,22 +39,19 @@ void deleteFieldHandler(FieldHandler *fh) {
 void buildFieldHandler(FieldHandler *fh) {
 	if(getBinaryFileSize(fh->bfr->bf) > 0) {
 		seekBinaryFile(fh->bfr->bf, 0L);
-		fh->bfr->bf->currentOffset = getStreamOffset(fh->bfr->bf);
-		while(fh->bfr->bf->currentOffset < getBinaryFileSize(fh->bfr->bf)) {
-			char *name = readString(fh->bfr, fh->bfr->bf->currentOffset);
-			char *type = readString(fh->bfr, fh->bfr->bf->currentOffset);
-			char *key = readString(fh->bfr, fh->bfr->bf->currentOffset);
+		while(getStreamOffset(fh->bfr->bf) < getBinaryFileSize(fh->bfr->bf)) {
+			char *name = readString(fh->bfr, getStreamOffset(fh->bfr->bf));
+			char *type = readString(fh->bfr, getStreamOffset(fh->bfr->bf));
+			char *key = readString(fh->bfr, getStreamOffset(fh->bfr->bf));
 
 			Field *f = newField(name, type, key);
 			setArrayListObject(fh->fields, (Field *) f, fh->fields->length);
-			fh->numberOfFields = fh->fields->length;
 		}
 	}
 }
 
 void addNewField(FieldHandler *fh, Field *f) {
 	setArrayListObject(fh->fields, (Field *) f, fh->fields->length);
-	fh->numberOfFields = fh->fields->length;
 	writeString(fh->bfw, f->name, getBinaryFileSize(fh->bfw->bf));
 	writeString(fh->bfw, f->type, getBinaryFileSize(fh->bfw->bf));
 	writeString(fh->bfw, f->key, getBinaryFileSize(fh->bfw->bf));
@@ -79,4 +75,8 @@ char *getFieldType(FieldHandler *fh, int position) {
 char *getFieldKey(FieldHandler *fh, int position) {
 	Field *f = (Field *) getArrayListObject(fh->fields, position);
 	return f->key;
+}
+
+int getNumberOfFields(FieldHandler *fh) {
+	return fh->fields->length;
 }

@@ -18,7 +18,6 @@ typedef struct BinaryFile {
 	FILE *stream;
 	char *fileName;
 	long fileSize;
-	long currentOffset;
 } BinaryFile;
 
 BinaryFile *newBinaryFile(char *fileName);

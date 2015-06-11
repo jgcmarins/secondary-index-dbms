@@ -15,14 +15,15 @@
 #include "BinaryFileReader.h"
 #include "ArrayList.h"
 
+#define DELIMITER '\0'
+
 typedef struct FieldHandler {
 	BinaryFileWriter *bfw;
 	BinaryFileReader *bfr;
 	ArrayList *fields;
-	int numberOfFields;
 } FieldHandler;
 
-FieldHandler *newFieldHandler(BinaryFile *bf, char delimiter);
+FieldHandler *newFieldHandler(BinaryFile *bf);
 
 void deleteFieldHandler(FieldHandler *fh);
 
@@ -37,5 +38,7 @@ char *getFieldName(FieldHandler *fh, int position);
 char *getFieldType(FieldHandler *fh, int position);
 
 char *getFieldKey(FieldHandler *fh, int position);
+
+int getNumberOfFields(FieldHandler *fh);
 
 #endif

@@ -26,7 +26,6 @@ int readInt(BinaryFileReader *bfr, long offset) {
 	seekBinaryFile(bfr->bf, offset);
 	int number;
 	fread(&number, sizeof(int), 1, bfr->bf->stream);
-	bfr->bf->currentOffset = getStreamOffset(bfr->bf);
 	return number;
 }
 
@@ -34,7 +33,6 @@ long readLong(BinaryFileReader *bfr, long offset) {
 	seekBinaryFile(bfr->bf, offset);
 	long number;
 	fread(&number, sizeof(long), 1, bfr->bf->stream);
-	bfr->bf->currentOffset = getStreamOffset(bfr->bf);
 	return number;
 }
 
@@ -42,7 +40,6 @@ float readFloat(BinaryFileReader *bfr, long offset) {
 	seekBinaryFile(bfr->bf, offset);
 	float number;
 	fread(&number, sizeof(float), 1, bfr->bf->stream);
-	bfr->bf->currentOffset = getStreamOffset(bfr->bf);
 	return number;
 }
 
@@ -50,7 +47,6 @@ double readDouble(BinaryFileReader *bfr, long offset) {
 	seekBinaryFile(bfr->bf, offset);
 	double number;
 	fread(&number, sizeof(double), 1, bfr->bf->stream);
-	bfr->bf->currentOffset = getStreamOffset(bfr->bf);
 	return number;
 }
 
@@ -58,7 +54,6 @@ char readChar(BinaryFileReader *bfr, long offset) {
 	seekBinaryFile(bfr->bf, offset);
 	char character;
 	fread(&character, sizeof(char), 1, bfr->bf->stream);
-	bfr->bf->currentOffset = getStreamOffset(bfr->bf);
 	return character;
 }
 
@@ -73,8 +68,6 @@ char *readString(BinaryFileReader *bfr, long offset) {
 	} while(c != bfr->delimiter);
 
 	buffer[i-1] = '\0';
-
-	bfr->bf->currentOffset = getStreamOffset(bfr->bf);
 
 	return buffer;
 }

@@ -15,8 +15,7 @@
 #include "StringConverter.h"
 #include "TableView.h"
 
-#define DELIMITER '|'
-#define DELETE '*'
+#define DELIMITER '\0'
 #define TABLE ".table"
 #define FIELDS ".fields"
 
@@ -32,7 +31,7 @@ Table *newTable(char *fileName);
 
 void deleteTable(Table *t);
 
-char *buildExtension(char *fileName, const char *extension);
+char *buildNameToTableFiles(char *fileName, const char *extension);
 
 BinaryFile *getTableFile(Table *t);
 
