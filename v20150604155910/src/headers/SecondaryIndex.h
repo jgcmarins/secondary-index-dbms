@@ -12,6 +12,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include "ArrayList.h"
+#include "Field.h"
 
 #define NO_NEXT -1
 

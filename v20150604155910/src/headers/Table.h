@@ -11,8 +11,12 @@
 #define _TABLE_H_
 
 #include "FieldHandler.h"
+#include "SecondaryIndexHandler.h"
+
 #include "NumberConverter.h"
 #include "StringConverter.h"
+#include "PointersComparator.h"
+
 #include "TableView.h"
 
 #define DELIMITER '\0'
@@ -25,6 +29,7 @@ typedef struct Table {
 	BinaryFile *tableFile;
 	BinaryFile *fieldsFile;
 	FieldHandler *fh;
+	SecondaryIndexHandler *sih;
 } Table;
 
 Table *newTable(char *fileName);
@@ -32,6 +37,8 @@ Table *newTable(char *fileName);
 void deleteTable(Table *t);
 
 char *buildNameToTableFiles(char *fileName, const char *extension);
+
+ArrayList *buildSecondaryIndexList(Table *t);
 
 BinaryFile *getTableFile(Table *t);
 

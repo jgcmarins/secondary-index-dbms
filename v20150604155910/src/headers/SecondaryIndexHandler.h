@@ -12,7 +12,9 @@
 
 #include "SecondaryIndex.h"
 #include "FieldHandler.h"
+#include "PointersComparator.h"
 
+#define SEPARATOR "_"
 #define INDEXEXTENSION ".sindex"
 #define INVERTEDLISTEXTENSION ".ilist"
 
@@ -28,7 +30,15 @@ SecondaryIndexHandler *newSecondaryIndexHandler(char *fileName, ArrayList *field
 
 void deleteSecondaryIndexHandler(SecondaryIndexHandler *sih);
 
-void buildNameToSecondaryIndexFiles(SecondaryIndexHandler *sih, const char *extension);
+void deleteIndex(SecondaryIndexHandler *sih);
+
+void deleteInvertedLists(SecondaryIndexHandler *sih);
+
+void deleteFiles(SecondaryIndexHandler *sih);
+
+void deleteFields(SecondaryIndexHandler *sih);
+
+char *buildFilesNames(SecondaryIndexHandler *sih, const char *extension, int position);
 
 void buildIndex(SecondaryIndexHandler *sih);
 
@@ -36,6 +46,18 @@ void buildFiles(SecondaryIndexHandler *sih);
 
 void buildInvertedLists(SecondaryIndexHandler *sih);
 
-void addIndex(SecondaryIndexHandler *sih, Field *f, SecondaryIndex *si);
+void addIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, int position);
+
+int compareIntSecondaryIndex(void *o1, void *o2);
+
+int compareLongSecondaryIndex(void *o1, void *o2);
+
+int compareFloatSecondaryIndex(void *o1, void *o2);
+
+int compareDoubleSecondaryIndex(void *o1, void *o2);
+
+int compareCharSecondaryIndex(void *o1, void *o2);
+
+int compareStringSecondaryIndex(void *o1, void *o2);
 
 #endif

@@ -9,8 +9,7 @@
 
 #include "headers/InsertionHandler.h"
 #include "headers/SelectionHandler.h"
-#include "headers/SecondaryIndex.h"
-#include "headers/PointersComparator.h"
+#include "headers/SecondaryIndexHandler.h"
 
 char *inputReader() {
 	char *buffer = NULL;

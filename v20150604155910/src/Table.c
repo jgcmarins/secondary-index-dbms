@@ -19,11 +19,13 @@ Table *newTable(char *fileName) {
 	t->fieldsFile = newBinaryFile(t->fieldsFileName);
 
 	t->fh = newFieldHandler(t->fieldsFile);
+	t->sih = newSecondaryIndexHandler(fileName, buildSecondaryIndexList(t));
 
 	return t;
 }
 
 void deleteTable(Table *t) {
+	if(t->sih != NULL) deleteSecondaryIndexHandler(t->sih);
 	if(t->fh != NULL) deleteFieldHandler(t->fh);
 	if(t->fieldsFile != NULL) deleteBinaryFile(t->fieldsFile);
 	if(t->tableFile != NULL) deleteBinaryFile(t->tableFile);
@@ -38,6 +40,17 @@ char *buildNameToTableFiles(char *fileName, const char *extension) { // tenso
 	string[strlen(fileName)] = '\0';
 	string = strcat(string, extension);
 	return string;
+}
+
+ArrayList *buildSecondaryIndexList(Table *t) {
+	ArrayList *secondaryFields = newArrayList();
+	int i;
+	for(i = 0 ; i < getNumberOfFields(t->fh) ; i++) {
+		if(!strcmp(SECONDARY_KEY, getFieldKey(t->fh, i)))
+			setArrayListObject(secondaryFields, (Field *) getField(t->fh, i), secondaryFields->length);
+	}
+	
+	return secondaryFields;
 }
 
 BinaryFile *getTableFile(Table *t) {
