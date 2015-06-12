@@ -259,3 +259,67 @@ SecondaryIndex *selectSecondaryIndex(BinaryFile *bf, long offset, char* type) {
 
 	return newSecondaryIndex(p, recordOffset, nextOffset);
 }
+
+void displayIndex(SecondaryIndexHandler *sih) {
+	ArrayList *columnName = newArrayList();
+	ArrayList *strings = newArrayList();
+	int i, j;
+	for(i = 0 ; i < sih->fields->length ; i++) {
+		Field *f = (Field *) getArrayListObject(sih->fields, i);
+		setArrayListObject(columnName, (char *) f->name, columnName->length);
+		ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
+		for(j = 0 ; j < index->length ; j++) {
+			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, j);
+			char *string = NULL;
+			if(!strcmp(f->type, INT)) {
+				int *p = (int *) si->value;
+				string = intToString(*p);
+			}
+			else if(!strcmp(f->type, LONG)) {
+				long *p = (long *) si->value;
+				string = longToString(*p);
+			}
+			else if(!strcmp(f->type, FLOAT)) {
+				float *p = (float *) si->value;
+				string = floatToString(*p);
+			}
+			else if(!strcmp(f->type, DOUBLE)) {
+				double *p = (double *) si->value;
+				string = doubleToString(*p);
+			}
+			else if(!strcmp(f->type, CHAR)) {
+				string = (char *) realloc(string, sizeof(char)*(strlen(si->value) + 1));
+				memcpy(string, si->value, sizeof(char)*strlen(si->value));
+				string[strlen(si->value)] = '\0';
+			}
+			else if(!strcmp(f->type, STRING)) {
+				string = (char *) realloc(string, sizeof(char)*(strlen(si->value) + 1));
+				memcpy(string, si->value, sizeof(char)*strlen(si->value));
+				string[strlen(si->value)] = '\0';
+			}
+			ArrayList *row = newArrayList();
+			setArrayListObject(row, string, row->length);
+			setArrayListObject(strings, row, strings->length);
+		}
+
+		TableView *tv = newTableView(columnName);
+		printTableHeader(tv);
+		for(j = 0 ; j < strings->length ; j++) printTableRow(tv, (ArrayList *) getArrayListObject(strings, j));
+		deleteTableView(tv);
+
+		while(strings->length > 0) {
+			ArrayList *row = getArrayListObject(strings, strings->length - 1);
+			removeArrayListObjectFromPosition(strings, strings->length - 1);
+			while(row->length > 0) {
+				char * string = getArrayListObject(row, row->length - 1);
+				removeArrayListObjectFromPosition(row, row->length - 1);
+				free(string);
+			}
+			deleteArrayList(row);
+		}
+
+		removeArrayListObjectFromPosition(columnName, columnName->length - 1);
+	}
+	deleteArrayList(strings);
+	deleteArrayList(columnName);
+}

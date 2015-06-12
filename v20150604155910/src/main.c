@@ -118,9 +118,11 @@ int main(int argc, char *argv[]) {
 
 	//displayFields(t);
 
-	//insertRecord(ih);
+	insertRecord(ih);
 
 	printRecords(sh);
+
+	displayIndex(t->sih);
 
 	deleteSelectionHandler(sh);
 	deleteInsertionHandler(ih);

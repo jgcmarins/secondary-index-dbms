@@ -13,6 +13,7 @@
 #include "SecondaryIndex.h"
 #include "FieldHandler.h"
 #include "PointersComparator.h"
+#include "TableView.h"
 
 #define SEPARATOR "_"
 #define INDEXEXTENSION ".sindex"
@@ -65,5 +66,7 @@ int compareCharSecondaryIndex(void *o1, void *o2);
 int compareStringSecondaryIndex(void *o1, void *o2);
 
 SecondaryIndex *selectSecondaryIndex(BinaryFile *bf, long offset, char* type);
+
+void displayIndex(SecondaryIndexHandler *sih);
 
 #endif
