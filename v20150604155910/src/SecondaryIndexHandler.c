@@ -119,7 +119,7 @@ void buildInvertedLists(SecondaryIndexHandler *sih) {
 	for(i = 0 ; i < sih->fields->length ; i++){
 		char *fileName = buildFilesNames(sih, INVERTEDLISTEXTENSION, i);
 		BinaryFile *bf = newBinaryFile(fileName);
-		setArrayListObject(sih->files, (BinaryFile *) bf, i);
+		setArrayListObject(sih->invertedLists, (BinaryFile *) bf, i);
 	}
 }
 
@@ -175,4 +175,37 @@ int compareStringSecondaryIndex(void *o1, void *o2) {
 	SecondaryIndex *si2 = (SecondaryIndex *) o2;
 
 	return compareString(si1->value, si2->value);
+}
+
+SecondaryIndex *selectSecondaryIndex(BinaryFile *bf, long offset, char* type) {
+	BinaryFileReader *bfr = newBinaryFileReader(bf, DELIMITER);
+	void *p = NULL;
+	if(!strcmp(type, INT)) {
+		int number = readInt(bfr, offset);
+		p = (int *) realloc(p, sizeof(int));
+		memcpy(p, &number, sizeof(int));
+	} else if(!strcmp(type, LONG)) {
+		long number = readLong(bfr, offset);
+		p = (long *) realloc(p, sizeof(long));
+		memcpy(p, &number, sizeof(long));
+	} else if(!strcmp(type, FLOAT)) {
+		float number = readFloat(bfr, offset);
+		p = (float *) realloc(p, sizeof(float));
+		memcpy(p, &number, sizeof(float));
+	} else if(!strcmp(type, DOUBLE)) {
+		double number = readDouble(bfr, offset);
+		p = (double *) realloc(p, sizeof(double));
+		memcpy(p, &number, sizeof(double));
+	} else if(!strcmp(type, CHAR)) {
+		char character = readChar(bfr, offset);
+		p = (char *) realloc(p, sizeof(char));
+		memcpy(p, &character, sizeof(char));
+	} else if(!strcmp(type, STRING)) {
+		p = (char *) readString(bfr, offset);
+	}
+	long recordOffset = readLong(bfr, getStreamOffset(bfr->bf));
+	long nextOffset = readLong(bfr, getStreamOffset(bfr->bf));
+	deleteBinaryFileReader(bfr);
+
+	return newSecondaryIndex(p, recordOffset, nextOffset);
 }

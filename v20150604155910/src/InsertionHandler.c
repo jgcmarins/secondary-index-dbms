@@ -27,6 +27,10 @@ void deleteInsertionHandler(InsertionHandler *ih) {
 
 void insert(InsertionHandler *ih, ArrayList *record) {
 	long offset = findBestFit(ih, record);
+
+	long recordOffset = offset;
+	ArrayList *secondaryKeys = newArrayList();
+
 	writeInt(ih->bfw, calculateRecordSize(ih, record), offset);
 	offset += sizeof(int);
 	int i;
@@ -40,6 +44,20 @@ void insert(InsertionHandler *ih, ArrayList *record) {
 		else if(!strcmp(type, CHAR)) offset = insertChar(ih, (char *) getArrayListObject(record, i), offset);
 		else if(!strcmp(type, STRING)) offset = insertString(ih, (char *) getArrayListObject(record, i), offset);
 		//printf("\n");
+		if(!strcmp(getFieldKey(ih->t->fh, i), SECONDARY_KEY))
+			setArrayListObject(secondaryKeys, getArrayListObject(record, i), secondaryKeys->length);
+	}
+
+	insertSecondaryIndex(ih, secondaryKeys, recordOffset);
+
+	while(secondaryKeys->length > 0) removeArrayListObjectFromPosition(secondaryKeys, secondaryKeys->length - 1);
+	deleteArrayList(secondaryKeys);
+}
+
+void insertSecondaryIndex(InsertionHandler *ih, ArrayList *secondaryKeys, long recordOffset) {
+	int i;
+	for(i = 0 ; i < secondaryKeys->length ; i++) {
+		printf("\"%s\"\n", (char *) getArrayListObject(secondaryKeys, i));
 	}
 }
 

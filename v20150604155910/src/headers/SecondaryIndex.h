@@ -23,7 +23,7 @@ typedef struct SecondaryIndex {
 	long nextOffset;
 } SecondaryIndex;
 
-SecondaryIndex *newSecondaryIndex(void *value, long recordOffset);
+SecondaryIndex *newSecondaryIndex(void *value, long recordOffset, long nextOffset);
 
 void deleteSecondaryIndex(SecondaryIndex *si);
 

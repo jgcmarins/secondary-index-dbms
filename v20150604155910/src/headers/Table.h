@@ -15,7 +15,6 @@
 
 #include "NumberConverter.h"
 #include "StringConverter.h"
-#include "PointersComparator.h"
 
 #include "TableView.h"
 
@@ -39,6 +38,8 @@ void deleteTable(Table *t);
 char *buildNameToTableFiles(char *fileName, const char *extension);
 
 ArrayList *buildSecondaryIndexList(Table *t);
+
+void buildSecondaryIndex(Table *t);
 
 BinaryFile *getTableFile(Table *t);
 

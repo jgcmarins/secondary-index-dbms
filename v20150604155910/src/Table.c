@@ -20,6 +20,7 @@ Table *newTable(char *fileName) {
 
 	t->fh = newFieldHandler(t->fieldsFile);
 	t->sih = newSecondaryIndexHandler(fileName, buildSecondaryIndexList(t));
+	buildSecondaryIndex(t);
 
 	return t;
 }
@@ -51,6 +52,28 @@ ArrayList *buildSecondaryIndexList(Table *t) {
 	}
 	
 	return secondaryFields;
+}
+
+void buildSecondaryIndex(Table *t) {
+	int i;
+	for(i = 0 ; i < t->sih->fields->length ; i++) {
+		Field *f = (Field *) getArrayListObject(t->sih->fields, i);
+		BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(t->sih->files, i);
+		seekBinaryFile(bfFiles, 0L);
+
+		while(getStreamOffset(bfFiles) < getBinaryFileSize(bfFiles)) { // each secondary index
+			//printf("1.Checando offset \"%ld\" do arquivos \"%s\"\n", getStreamOffset(bfFiles), bfFiles->fileName);
+			SecondaryIndex *si = selectSecondaryIndex(bfFiles, getStreamOffset(bfFiles), f->type);
+			addIndex(t->sih, si, i);
+
+			while(si->nextOffset != -1) { // each duplicated
+				BinaryFile *bfLists = (BinaryFile *) getArrayListObject(t->sih->invertedLists, i);
+				//printf("2.Checando offset \"%ld\" do arquivos \"%s\"\n", si->nextOffset, bfLists->fileName);
+				si = selectSecondaryIndex(bfLists, si->nextOffset, f->type);
+				addIndex(t->sih, si, i);
+			}
+		}
+	}
 }
 
 BinaryFile *getTableFile(Table *t) {
