@@ -12,8 +12,13 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "ArrayList.h"
 #include "Field.h"
+
+#include "StringConverter.h"
+#include "NumberConverter.h"
+#include "PointersComparator.h"
 
 #define NO_NEXT -1
 

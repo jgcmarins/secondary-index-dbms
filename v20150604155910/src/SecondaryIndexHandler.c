@@ -123,6 +123,56 @@ void buildInvertedLists(SecondaryIndexHandler *sih) {
 	}
 }
 
+void insertSecondaryIndex(SecondaryIndexHandler *sih, ArrayList *secondaryKeys, long recordOffset) {
+	ArrayList *index = createNewSecondaryIndex(sih, secondaryKeys, recordOffset);
+	int i;
+	for(i = 0 ; i < index->length ; i++) {
+		SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, i);
+		addIndex(sih, si, i);
+	}
+	while(index->length > 0) removeArrayListObjectFromPosition(index, index->length - 1);
+	deleteArrayList(index);
+}
+
+ArrayList *createNewSecondaryIndex(SecondaryIndexHandler *sih, ArrayList *secondaryKeys, long recordOffset){
+	ArrayList *index = newArrayList();
+	int i;
+	for(i = 0 ; i < secondaryKeys->length ; i++) {
+		Field *f = (Field *) getArrayListObject(sih->fields, i);
+		char *type = f->type;
+		void *p = NULL;
+		char *string = (char *) getArrayListObject(secondaryKeys, i);
+		if(!strcmp(type, INT)) {
+			int number = stringToInt(string);
+			p = (int *) realloc(p, sizeof(int));
+			memcpy(p, &number, sizeof(int));
+		} else if(!strcmp(type, LONG)) {
+			long number = stringToLong(string);
+			p = (long *) realloc(p, sizeof(long));
+			memcpy(p, &number, sizeof(long));
+		} else if(!strcmp(type, FLOAT)) {
+			float number = stringToFloat(string);
+			p = (float *) realloc(p, sizeof(float));
+			memcpy(p, &number, sizeof(float));
+		} else if(!strcmp(type, DOUBLE)) {
+			double number = stringToDouble(string);
+			p = (double *) realloc(p, sizeof(double));
+			memcpy(p, &number, sizeof(double));
+		} else if(!strcmp(type, CHAR)) {
+			p = (char *) realloc(p, sizeof(char));
+			memcpy(p, string, sizeof(char));
+		} else if(!strcmp(type, STRING)) {
+			char *temp = (char *) malloc(sizeof(char)*(strlen(string) + 1));
+			memcpy(temp, string, sizeof(char)*(strlen(string)));
+			temp[strlen(string)] = '\0';
+			p = (char *) temp;
+		}
+		SecondaryIndex *si = newSecondaryIndex(p, recordOffset, NO_NEXT);
+		setArrayListObject(index, (SecondaryIndex *) si, i);
+	}
+	return index;
+}
+
 void addIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, int position) {
 	Field *f = (Field *) getArrayListObject(sih->fields, position);
 	ArrayList *index = (ArrayList *) getArrayListObject(sih->index, position);

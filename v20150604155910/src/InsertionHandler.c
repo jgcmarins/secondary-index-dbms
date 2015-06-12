@@ -48,17 +48,10 @@ void insert(InsertionHandler *ih, ArrayList *record) {
 			setArrayListObject(secondaryKeys, getArrayListObject(record, i), secondaryKeys->length);
 	}
 
-	insertSecondaryIndex(ih, secondaryKeys, recordOffset);
+	insertSecondaryIndex(ih->t->sih, secondaryKeys, recordOffset);
 
 	while(secondaryKeys->length > 0) removeArrayListObjectFromPosition(secondaryKeys, secondaryKeys->length - 1);
 	deleteArrayList(secondaryKeys);
-}
-
-void insertSecondaryIndex(InsertionHandler *ih, ArrayList *secondaryKeys, long recordOffset) {
-	int i;
-	for(i = 0 ; i < secondaryKeys->length ; i++) {
-		printf("\"%s\"\n", (char *) getArrayListObject(secondaryKeys, i));
-	}
 }
 
 long insertInt(InsertionHandler *ih, char *record, long offset) {

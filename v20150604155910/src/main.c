@@ -55,9 +55,9 @@ void insertRecord(InsertionHandler *ih) {
 	insert(ih, record);
 
 	while(record->length > 0) {
-		char *field = getArrayListObject(record, record->length - 1);
+		char *string = getArrayListObject(record, record->length - 1);
 		removeArrayListObjectFromPosition(record, record->length - 1);
-		free(field);
+		free(string);
 	}
 	deleteArrayList(record);
 }

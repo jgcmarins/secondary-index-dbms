@@ -24,8 +24,6 @@ void deleteInsertionHandler(InsertionHandler *ih);
 
 void insert(InsertionHandler *ih, ArrayList *record);
 
-void insertSecondaryIndex(InsertionHandler *ih, ArrayList *secondaryKeys, long recordOffset);
-
 long insertInt(InsertionHandler *ih, char *record, long offset);
 
 long insertLong(InsertionHandler *ih, char *record, long offset);

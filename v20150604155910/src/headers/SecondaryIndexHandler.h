@@ -46,6 +46,10 @@ void buildFiles(SecondaryIndexHandler *sih);
 
 void buildInvertedLists(SecondaryIndexHandler *sih);
 
+void insertSecondaryIndex(SecondaryIndexHandler *sih, ArrayList *secondaryKeys, long recordOffset);
+
+ArrayList *createNewSecondaryIndex(SecondaryIndexHandler *sih, ArrayList *secondaryKeys, long recordOffset);
+
 void addIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, int position);
 
 int compareIntSecondaryIndex(void *o1, void *o2);
