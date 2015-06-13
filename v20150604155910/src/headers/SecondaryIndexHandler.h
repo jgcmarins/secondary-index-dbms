@@ -19,6 +19,9 @@
 #define INDEXEXTENSION ".sindex"
 #define INVERTEDLISTEXTENSION ".ilist"
 
+#define RECORDOFFSET "Record offset"
+#define NEXTOFFSET "Next offset"
+
 typedef struct SecondaryIndexHandler {
 	char *fileName;
 	ArrayList *fields; //list of all fields that are secondary key
@@ -68,5 +71,9 @@ int compareStringSecondaryIndex(void *o1, void *o2);
 SecondaryIndex *selectSecondaryIndex(BinaryFile *bf, long offset, char* type);
 
 void displayIndex(SecondaryIndexHandler *sih);
+
+void displayIndexRow(ArrayList *columnName, ArrayList *rows);
+
+ArrayList *secondaryIndexToString(SecondaryIndex *si, char *type);
 
 #endif

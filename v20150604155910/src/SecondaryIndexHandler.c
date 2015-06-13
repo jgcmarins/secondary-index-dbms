@@ -262,64 +262,79 @@ SecondaryIndex *selectSecondaryIndex(BinaryFile *bf, long offset, char* type) {
 
 void displayIndex(SecondaryIndexHandler *sih) {
 	ArrayList *columnName = newArrayList();
-	ArrayList *strings = newArrayList();
+	setArrayListObject(columnName, (char *) RECORDOFFSET, columnName->length);
+	setArrayListObject(columnName, (char *) NEXTOFFSET, columnName->length);
+	ArrayList *rows = newArrayList();
 	int i, j;
 	for(i = 0 ; i < sih->fields->length ; i++) {
 		Field *f = (Field *) getArrayListObject(sih->fields, i);
-		setArrayListObject(columnName, (char *) f->name, columnName->length);
+		setArrayListObject(columnName, (char *) f->name, 0);
 		ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
 		for(j = 0 ; j < index->length ; j++) {
 			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, j);
-			char *string = NULL;
-			if(!strcmp(f->type, INT)) {
-				int *p = (int *) si->value;
-				string = intToString(*p);
-			}
-			else if(!strcmp(f->type, LONG)) {
-				long *p = (long *) si->value;
-				string = longToString(*p);
-			}
-			else if(!strcmp(f->type, FLOAT)) {
-				float *p = (float *) si->value;
-				string = floatToString(*p);
-			}
-			else if(!strcmp(f->type, DOUBLE)) {
-				double *p = (double *) si->value;
-				string = doubleToString(*p);
-			}
-			else if(!strcmp(f->type, CHAR)) {
-				string = (char *) realloc(string, sizeof(char)*(strlen(si->value) + 1));
-				memcpy(string, si->value, sizeof(char)*strlen(si->value));
-				string[strlen(si->value)] = '\0';
-			}
-			else if(!strcmp(f->type, STRING)) {
-				string = (char *) realloc(string, sizeof(char)*(strlen(si->value) + 1));
-				memcpy(string, si->value, sizeof(char)*strlen(si->value));
-				string[strlen(si->value)] = '\0';
-			}
-			ArrayList *row = newArrayList();
-			setArrayListObject(row, string, row->length);
-			setArrayListObject(strings, row, strings->length);
+			ArrayList *row = secondaryIndexToString(si, f->type);
+			setArrayListObject(rows, row, rows->length);
 		}
 
-		TableView *tv = newTableView(columnName);
-		printTableHeader(tv);
-		for(j = 0 ; j < strings->length ; j++) printTableRow(tv, (ArrayList *) getArrayListObject(strings, j));
-		deleteTableView(tv);
+		displayIndexRow(columnName, rows);
 
-		while(strings->length > 0) {
-			ArrayList *row = getArrayListObject(strings, strings->length - 1);
-			removeArrayListObjectFromPosition(strings, strings->length - 1);
-			while(row->length > 0) {
-				char * string = getArrayListObject(row, row->length - 1);
-				removeArrayListObjectFromPosition(row, row->length - 1);
-				free(string);
-			}
-			deleteArrayList(row);
-		}
-
-		removeArrayListObjectFromPosition(columnName, columnName->length - 1);
+		removeArrayListObjectFromPosition(columnName, 0);
 	}
-	deleteArrayList(strings);
+	deleteArrayList(rows);
+	while(columnName->length > 0) removeArrayListObjectFromPosition(columnName, columnName->length - 1);
 	deleteArrayList(columnName);
+}
+
+void displayIndexRow(ArrayList *columnName, ArrayList *rows) {
+	int j;
+	TableView *tv = newTableView(columnName);
+	printTableHeader(tv);
+	for(j = 0 ; j < rows->length ; j++) printTableRow(tv, (ArrayList *) getArrayListObject(rows, j));
+	deleteTableView(tv);
+
+	while(rows->length > 0) {
+		ArrayList *row = getArrayListObject(rows, rows->length - 1);
+		removeArrayListObjectFromPosition(rows, rows->length - 1);
+		while(row->length > 0) {
+			char * string = getArrayListObject(row, row->length - 1);
+			removeArrayListObjectFromPosition(row, row->length - 1);
+			free(string);
+		}
+		deleteArrayList(row);
+	}
+}
+
+ArrayList *secondaryIndexToString(SecondaryIndex *si, char *type) {
+	char *string = NULL;
+	if(!strcmp(type, INT)) {
+		int *p = (int *) si->value;
+		string = intToString(*p);
+	}
+	else if(!strcmp(type, LONG)) {
+		long *p = (long *) si->value;
+		string = longToString(*p);
+	}
+	else if(!strcmp(type, FLOAT)) {
+		float *p = (float *) si->value;
+		string = floatToString(*p);
+	}
+	else if(!strcmp(type, DOUBLE)) {
+		double *p = (double *) si->value;
+		string = doubleToString(*p);
+	}
+	else if(!strcmp(type, CHAR)) {
+		string = (char *) realloc(string, sizeof(char)*(strlen(si->value) + 1));
+		memcpy(string, si->value, sizeof(char)*strlen(si->value));
+		string[strlen(si->value)] = '\0';
+	}
+	else if(!strcmp(type, STRING)) {
+		string = (char *) realloc(string, sizeof(char)*(strlen(si->value) + 1));
+		memcpy(string, si->value, sizeof(char)*strlen(si->value));
+		string[strlen(si->value)] = '\0';
+	}
+	ArrayList *row = newArrayList();
+	setArrayListObject(row, string, row->length);
+	setArrayListObject(row, (char *) longToString(si->recordOffset), row->length);
+	setArrayListObject(row, (char *) longToString(si->nextOffset), row->length);
+	return row;
 }
