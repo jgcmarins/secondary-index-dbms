@@ -132,6 +132,75 @@ void insertSecondaryIndex(SecondaryIndexHandler *sih, ArrayList *secondaryKeys, 
 	}
 	while(index->length > 0) removeArrayListObjectFromPosition(index, index->length - 1);
 	deleteArrayList(index);
+	updateFiles(sih);
+}
+
+void updateFiles(SecondaryIndexHandler *sih) {
+	int i, j;
+	for(i = 0 ; i < sih->files->length ; i++) {
+		ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
+		Field *f = (Field *) getArrayListObject(sih->fields, i);
+		BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->files, i);
+		overwriteBinaryFile(bfFiles);
+		seekBinaryFile(bfFiles, 0L);
+		if(index->length > 1) {
+			for(j = 0 ; j < index->length - 1 ; j++) {
+				SecondaryIndex *si1 = (SecondaryIndex *) getArrayListObject(index, j);
+				SecondaryIndex *si2 = (SecondaryIndex *) getArrayListObject(index, j + 1);
+				if(compareSecondaryIndex(si1, si2, f->type)) {
+					saveIndex(sih, si1, i);
+					if(j == index->length - 2) saveIndex(sih, si2, i);
+				} else j = saveDuplicated(sih, si1, si2, i, j);
+			}
+		} else saveIndex(sih, (SecondaryIndex *) getArrayListObject(index, 0), i);
+	}
+}
+
+void saveIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, int i) {
+	Field *f = (Field *) getArrayListObject(sih->fields, i);
+	BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->files, i);
+	BinaryFileWriter *bfw = newBinaryFileWriter(bfFiles, DELIMITER);
+	long offset = getStreamOffset(bfFiles);
+	if(!strcmp(f->type, INT)) {
+		int *p = (int *) si->value;
+		writeInt(bfw, *p, offset);
+		offset += sizeof(int);
+	} else if(!strcmp(f->type, LONG)) {
+		long *p = (long *) si->value;
+		writeLong(bfw, *p, offset);
+		offset += sizeof(long);
+	} else if(!strcmp(f->type, FLOAT)) {
+		float *p = (float *) si->value;
+		writeFloat(bfw, *p, offset);
+		offset += sizeof(float);
+	} else if(!strcmp(f->type, DOUBLE)) {
+		double *p = (double *) si->value;
+		writeDouble(bfw, *p, offset);
+		offset += sizeof(double);
+	} else if(!strcmp(f->type, CHAR)) {
+		char *p = (char *) si->value;
+		writeChar(bfw, *p, offset);
+		offset += sizeof(char);
+	} else if(!strcmp(f->type, STRING)) {
+		char *p = (char *) si->value;
+		writeString(bfw, p, offset);
+		offset += (strlen(p) + 1);
+	}
+
+	writeLong(bfw, si->recordOffset, offset);
+	offset += sizeof(long);
+	writeLong(bfw, si->nextOffset, offset);
+	offset += sizeof(long);
+
+	deleteBinaryFileWriter(bfw);
+
+	seekBinaryFile(bfFiles, offset);
+}
+
+int saveDuplicated(SecondaryIndexHandler *sih, SecondaryIndex *si1, SecondaryIndex *si2, int i, int j) {
+	//Field *f = (Field *) getArrayListObject(sih->fields, i);
+	//BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->invertedLists, i);
+	return j;//(j - 1);
 }
 
 ArrayList *createNewSecondaryIndex(SecondaryIndexHandler *sih, ArrayList *secondaryKeys, long recordOffset){
@@ -183,6 +252,16 @@ void addIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, int position) {
 	else if(!strcmp(type, DOUBLE)) addArrayListObject(index, si, compareDoubleSecondaryIndex);
 	else if(!strcmp(type, CHAR)) addArrayListObject(index, si, compareCharSecondaryIndex);
 	else if(!strcmp(type, STRING)) addArrayListObject(index, si, compareStringSecondaryIndex);
+}
+
+int compareSecondaryIndex(SecondaryIndex *si1, SecondaryIndex *si2, char *type) {
+	if(!strcmp(type, INT)) return(compareIntSecondaryIndex(si1, si2));
+	else if(!strcmp(type, LONG)) return(compareLongSecondaryIndex(si1, si2));
+	else if(!strcmp(type, FLOAT)) return(compareFloatSecondaryIndex(si1, si2));
+	else if(!strcmp(type, DOUBLE)) return(compareDoubleSecondaryIndex(si1, si2));
+	else if(!strcmp(type, CHAR)) return(compareCharSecondaryIndex(si1, si2));
+	else if(!strcmp(type, STRING)) return(compareStringSecondaryIndex(si1, si2));
+	return 0;
 }
 
 int compareIntSecondaryIndex(void *o1, void *o2) {

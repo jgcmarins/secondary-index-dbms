@@ -54,3 +54,11 @@ long getBinaryFileSize(BinaryFile *bf) {
 long getStreamOffset(BinaryFile *bf) {
 	return ftell(bf->stream);
 }
+
+void overwriteBinaryFile(BinaryFile *bf) {
+	if(bf->stream != NULL) fclose(bf->stream);
+	
+	bf->stream = fopen((const char *) bf->fileName, "w+b");
+	if(bf->stream == NULL) exit(1); //error 1
+	updateBinaryFileSize(bf);
+}

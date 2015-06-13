@@ -34,4 +34,6 @@ long getBinaryFileSize(BinaryFile *bf);
 
 long getStreamOffset(BinaryFile *bf);
 
+void overwriteBinaryFile(BinaryFile *bf);
+
 #endif
