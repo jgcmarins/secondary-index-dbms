@@ -139,28 +139,35 @@ void updateFiles(SecondaryIndexHandler *sih) {
 	int i, j;
 	for(i = 0 ; i < sih->files->length ; i++) {
 		ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
+		int k;
+		for(k = 0 ; k < index->length ; k++) {
+			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, k);
+			printf("%d: \"%s\", \"%ld\", \"%ld\"\n", k, (char *) si->value, si->recordOffset, si->nextOffset);
+		}
 		Field *f = (Field *) getArrayListObject(sih->fields, i);
 		BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->files, i);
 		overwriteBinaryFile(bfFiles);
 		seekBinaryFile(bfFiles, 0L);
+		BinaryFile *bfLists = (BinaryFile *) getArrayListObject(sih->invertedLists, i);
+		overwriteBinaryFile(bfLists);
+		seekBinaryFile(bfLists, 0L);
 		if(index->length > 1) {
-			for(j = 0 ; j < index->length - 1 ; j++) {
+			for(j = 0 ; j < index->length - 1 ;) {
 				SecondaryIndex *si1 = (SecondaryIndex *) getArrayListObject(index, j);
-				SecondaryIndex *si2 = (SecondaryIndex *) getArrayListObject(index, j + 1);
+				SecondaryIndex *si2 = (SecondaryIndex *) getArrayListObject(index, ++j);
 				if(compareSecondaryIndex(si1, si2, f->type)) {
-					saveIndex(sih, si1, i);
-					if(j == index->length - 2) saveIndex(sih, si2, i);
-				} else j = saveDuplicated(sih, si1, si2, i, j);
+					saveIndex(sih, si1, bfFiles, i);
+					if(j == index->length - 2) saveIndex(sih, si2, bfFiles, i);
+				} else j += saveDuplicated(sih, si1, si2, i, j);
 			}
-		} else saveIndex(sih, (SecondaryIndex *) getArrayListObject(index, 0), i);
+		} else saveIndex(sih, (SecondaryIndex *) getArrayListObject(index, 0), bfFiles, i);
 	}
 }
 
-void saveIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, int i) {
+void saveIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, BinaryFile *bf, int i) {
 	Field *f = (Field *) getArrayListObject(sih->fields, i);
-	BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->files, i);
-	BinaryFileWriter *bfw = newBinaryFileWriter(bfFiles, DELIMITER);
-	long offset = getStreamOffset(bfFiles);
+	BinaryFileWriter *bfw = newBinaryFileWriter(bf, DELIMITER);
+	long offset = getStreamOffset(bf);
 	if(!strcmp(f->type, INT)) {
 		int *p = (int *) si->value;
 		writeInt(bfw, *p, offset);
@@ -194,13 +201,46 @@ void saveIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, int i) {
 
 	deleteBinaryFileWriter(bfw);
 
-	seekBinaryFile(bfFiles, offset);
+	seekBinaryFile(bf, offset);
 }
 
 int saveDuplicated(SecondaryIndexHandler *sih, SecondaryIndex *si1, SecondaryIndex *si2, int i, int j) {
-	//Field *f = (Field *) getArrayListObject(sih->fields, i);
-	//BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->invertedLists, i);
-	return j;//(j - 1);
+	int counter = 0;
+	ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
+	Field *f = (Field *) getArrayListObject(sih->fields, i);
+	BinaryFile *bfLists = (BinaryFile *) getArrayListObject(sih->invertedLists, i);
+
+	si2->nextOffset = NO_NEXT;
+	seekBinaryFile(bfLists, getBinaryFileSize(bfLists));
+	long next = getStreamOffset(bfLists);
+	saveIndex(sih, si2, bfLists, i);
+	printf("save duplicated %d: \"%s\", \"%ld\", \"%ld\"\n", j, (char *) si2->value, si2->recordOffset, si2->nextOffset);
+
+	if(j < index->length - 1) {
+		j++;
+		counter++;
+		si2 = (SecondaryIndex *) getArrayListObject(index, j);
+
+		while(!compareSecondaryIndex(si1, si2, f->type)) {
+			si2->nextOffset = next;
+			seekBinaryFile(bfLists, getBinaryFileSize(bfLists));
+			next = getStreamOffset(bfLists);
+			saveIndex(sih, si2, bfLists, i);
+			printf("save duplicated %d: \"%s\", \"%ld\", \"%ld\"\n", j, (char *) si2->value, si2->recordOffset, si2->nextOffset);
+			if(j < (index->length - 1)) {
+				si2 = (SecondaryIndex *) getArrayListObject(index, ++j);
+				counter++;
+			}
+			else break;
+		}
+	}
+	si1->nextOffset = next;
+	BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->files, i);
+	saveIndex(sih, si1, bfFiles, i);
+	printf("save normal %d: \"%s\", \"%ld\", \"%ld\"\n", j, (char *) si1->value, si1->recordOffset, si1->nextOffset);
+
+
+	return counter;
 }
 
 ArrayList *createNewSecondaryIndex(SecondaryIndexHandler *sih, ArrayList *secondaryKeys, long recordOffset){

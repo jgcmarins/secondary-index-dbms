@@ -7,13 +7,13 @@ string
 normal key
 location
 string
-secondary key
+normal key
 language
 string
-secondary key
+normal key
 favorite_counter
 int
-secondary key
+normal key
 retweet_counter
 int
 normal key

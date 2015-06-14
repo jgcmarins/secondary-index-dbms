@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
 
 	insertRecord(ih);
 
-	printRecords(sh);
+	//printRecords(sh);
 
 	displayIndex(t->sih);
 

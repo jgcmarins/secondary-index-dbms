@@ -54,7 +54,7 @@ void insertSecondaryIndex(SecondaryIndexHandler *sih, ArrayList *secondaryKeys, 
 
 void updateFiles(SecondaryIndexHandler *sih);
 
-void saveIndex(SecondaryIndexHandler *sih, SecondaryIndex *si1, int i);
+void saveIndex(SecondaryIndexHandler *sih, SecondaryIndex *si1, BinaryFile *bf, int i);
 
 int saveDuplicated(SecondaryIndexHandler *sih, SecondaryIndex *si1, SecondaryIndex *si2, int i, int j);
 
