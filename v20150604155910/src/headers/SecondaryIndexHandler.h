@@ -78,6 +78,8 @@ int compareStringSecondaryIndex(void *o1, void *o2);
 
 SecondaryIndex *selectSecondaryIndex(BinaryFile *bf, long offset, char* type);
 
+ArrayList *searchSecondaryKey(SecondaryIndexHandler *sih, int position, SecondaryIndex *si);
+
 void displayIndex(SecondaryIndexHandler *sih);
 
 void displayIndexRow(ArrayList *columnName, ArrayList *rows);

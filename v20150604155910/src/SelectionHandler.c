@@ -36,6 +36,18 @@ ArrayList *selectAll(SelectionHandler *sh) {
 	return records;
 }
 
+ArrayList *selectBySecondaryIndex(SelectionHandler *sh, int position, SecondaryIndex *si) {
+	ArrayList *index = searchSecondaryKey(sh->t->sih, position, si);
+	ArrayList *records = newArrayList();
+	int i;
+	for(i = 0 ; i < index->length ; i++){
+		SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, i);
+		ArrayList *record = selectByOffset(sh, si->recordOffset);
+		setArrayListObject(records, (ArrayList *) record, records->length);
+	}
+	return records;
+}
+
 ArrayList *selectByOffset(SelectionHandler *sh, long offset) {
 	int deleted = readInt(sh->bfr, offset);
 	if(deleted > 0) {

@@ -375,6 +375,33 @@ SecondaryIndex *selectSecondaryIndex(BinaryFile *bf, long offset, char* type) {
 	return newSecondaryIndex(p, recordOffset, nextOffset);
 }
 
+ArrayList *searchSecondaryKey(SecondaryIndexHandler *sih, int position, SecondaryIndex *si) {
+	ArrayList *result = newArrayList();
+	ArrayList *index = (ArrayList *) getArrayListObject(sih->index, position);
+	Field *f = (Field *) getArrayListObject(sih->fields, position);
+
+	int i;
+	if(!strcmp(f->type, INT)) i = indexOfArrayListObject(index, si, compareIntSecondaryIndex);
+	else if(!strcmp(f->type, LONG)) i = indexOfArrayListObject(index, si, compareLongSecondaryIndex);
+	else if(!strcmp(f->type, FLOAT)) i = indexOfArrayListObject(index, si, compareFloatSecondaryIndex);
+	else if(!strcmp(f->type, DOUBLE)) i = indexOfArrayListObject(index, si, compareDoubleSecondaryIndex);
+	else if(!strcmp(f->type, CHAR)) i = indexOfArrayListObject(index, si, compareCharSecondaryIndex);
+	else if(!strcmp(f->type, STRING)) i = indexOfArrayListObject(index, si, compareStringSecondaryIndex);
+
+	if(i != -1) {
+		setArrayListObject(result, (SecondaryIndex *) getArrayListObject(index, i), result->length);
+		if(i < (index->length - 1)) {
+			SecondaryIndex *duplicated = (SecondaryIndex *) getArrayListObject(index, ++i);
+			while(!compareSecondaryIndex(si, duplicated, f->type)) {
+				setArrayListObject(result, duplicated, result->length);
+				if(i < (index->length - 1)) duplicated = (SecondaryIndex *) getArrayListObject(index, ++i);
+				else break;
+			}
+		}
+	}
+	return result;
+}
+
 void displayIndex(SecondaryIndexHandler *sih) {
 	ArrayList *columnName = newArrayList();
 	setArrayListObject(columnName, (char *) RECORDOFFSET, columnName->length);

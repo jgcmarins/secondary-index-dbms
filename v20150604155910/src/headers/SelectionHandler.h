@@ -24,6 +24,8 @@ void deleteSelectionHandler(SelectionHandler *sh);
 
 ArrayList *selectAll(SelectionHandler *sh);
 
+ArrayList *selectBySecondaryIndex(SelectionHandler *sh, int position, SecondaryIndex *si);
+
 ArrayList *selectByOffset(SelectionHandler *sh, long offset);
 
 int *selectInt(SelectionHandler *sh);
