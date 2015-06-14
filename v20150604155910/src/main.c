@@ -114,13 +114,13 @@ int main(int argc, char *argv[]) {
 	InsertionHandler *ih = newInsertionHandler(t);
 	SelectionHandler *sh = newSelectionHandler(t);
 
-	//insertFields(ih);
+	/*insertFields(ih);
 
-	//displayFields(t);
+	displayFields(t);*/
 
 	//insertRecord(ih);
 
-	//printRecords(sh);
+	printRecords(sh);
 
 	displayIndex(t->sih);
 

@@ -139,18 +139,16 @@ void updateFiles(SecondaryIndexHandler *sih) {
 	int i, j;
 	for(i = 0 ; i < sih->files->length ; i++) {
 		ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
-		int k;
-		for(k = 0 ; k < index->length ; k++) {
-			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, k);
-			printf("%d: \"%s\", \"%ld\", \"%ld\"\n", k, (char *) si->value, si->recordOffset, si->nextOffset);
-		}
 		Field *f = (Field *) getArrayListObject(sih->fields, i);
+
 		BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->files, i);
 		overwriteBinaryFile(bfFiles);
 		seekBinaryFile(bfFiles, 0L);
+
 		BinaryFile *bfLists = (BinaryFile *) getArrayListObject(sih->invertedLists, i);
 		overwriteBinaryFile(bfLists);
 		seekBinaryFile(bfLists, 0L);
+
 		if(index->length > 1) {
 			for(j = 0 ; j < index->length - 1 ;) {
 				SecondaryIndex *si1 = (SecondaryIndex *) getArrayListObject(index, j);
@@ -206,6 +204,7 @@ void saveIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, BinaryFile *bf, i
 
 int saveDuplicated(SecondaryIndexHandler *sih, SecondaryIndex *si1, SecondaryIndex *si2, int i, int j) {
 	int counter = 0;
+
 	ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
 	Field *f = (Field *) getArrayListObject(sih->fields, i);
 	BinaryFile *bfLists = (BinaryFile *) getArrayListObject(sih->invertedLists, i);
@@ -214,11 +213,9 @@ int saveDuplicated(SecondaryIndexHandler *sih, SecondaryIndex *si1, SecondaryInd
 	seekBinaryFile(bfLists, getBinaryFileSize(bfLists));
 	long next = getStreamOffset(bfLists);
 	saveIndex(sih, si2, bfLists, i);
-	printf("save duplicated %d: \"%s\", \"%ld\", \"%ld\"\n", j, (char *) si2->value, si2->recordOffset, si2->nextOffset);
 
 	if(j < index->length - 1) {
-		j++;
-		counter++;
+		j++; counter++;
 		si2 = (SecondaryIndex *) getArrayListObject(index, j);
 
 		while(!compareSecondaryIndex(si1, si2, f->type)) {
@@ -226,7 +223,7 @@ int saveDuplicated(SecondaryIndexHandler *sih, SecondaryIndex *si1, SecondaryInd
 			seekBinaryFile(bfLists, getBinaryFileSize(bfLists));
 			next = getStreamOffset(bfLists);
 			saveIndex(sih, si2, bfLists, i);
-			printf("save duplicated %d: \"%s\", \"%ld\", \"%ld\"\n", j, (char *) si2->value, si2->recordOffset, si2->nextOffset);
+
 			if(j < (index->length - 1)) {
 				si2 = (SecondaryIndex *) getArrayListObject(index, ++j);
 				counter++;
@@ -234,11 +231,10 @@ int saveDuplicated(SecondaryIndexHandler *sih, SecondaryIndex *si1, SecondaryInd
 			else break;
 		}
 	}
+
 	si1->nextOffset = next;
 	BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->files, i);
 	saveIndex(sih, si1, bfFiles, i);
-	printf("save normal %d: \"%s\", \"%ld\", \"%ld\"\n", j, (char *) si1->value, si1->recordOffset, si1->nextOffset);
-
 
 	return counter;
 }
@@ -389,6 +385,7 @@ void displayIndex(SecondaryIndexHandler *sih) {
 		Field *f = (Field *) getArrayListObject(sih->fields, i);
 		setArrayListObject(columnName, (char *) f->name, 0);
 		ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
+		
 		for(j = 0 ; j < index->length ; j++) {
 			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, j);
 			ArrayList *row = secondaryIndexToString(si, f->type);
