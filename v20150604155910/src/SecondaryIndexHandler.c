@@ -157,7 +157,7 @@ void updateFiles(SecondaryIndexHandler *sih) {
 				SecondaryIndex *si2 = (SecondaryIndex *) getArrayListObject(index, ++j);
 				if(compareSecondaryIndex(si1, si2, f->type)) {
 					saveIndex(sih, si1, bfFiles, i);
-					if(j == index->length - 2) saveIndex(sih, si2, bfFiles, i);
+					if(j == index->length - 1) saveIndex(sih, si2, bfFiles, i);
 				} else j += saveDuplicated(sih, si1, si2, i, j);
 			}
 		} else saveIndex(sih, (SecondaryIndex *) getArrayListObject(index, 0), bfFiles, i);
