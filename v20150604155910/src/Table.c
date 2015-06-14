@@ -73,6 +73,14 @@ void buildSecondaryIndex(Table *t) {
 				addIndex(t->sih, si, i);
 			}
 		}
+
+		/*printf("montando:\n");
+		ArrayList *index = (ArrayList *) getArrayListObject(t->sih->index, i);
+		int k;
+		for(k = 0 ; k < index->length ; k++) {
+			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, k);
+			printf("\"%s\"\n", (char *) si->value);
+		}*/
 	}
 }
 

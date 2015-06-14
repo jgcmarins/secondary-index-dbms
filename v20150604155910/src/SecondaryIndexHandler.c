@@ -141,6 +141,13 @@ void updateFiles(SecondaryIndexHandler *sih) {
 		ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
 		Field *f = (Field *) getArrayListObject(sih->fields, i);
 
+		/*printf("insercao:\n");
+		int k;
+		for(k = 0 ; k < index->length ; k++) {
+			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, k);
+			printf("\"%s\"\n", (char *) si->value);
+		}*/
+
 		BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->files, i);
 		overwriteBinaryFile(bfFiles);
 		seekBinaryFile(bfFiles, 0L);
@@ -155,8 +162,13 @@ void updateFiles(SecondaryIndexHandler *sih) {
 				SecondaryIndex *si2 = (SecondaryIndex *) getArrayListObject(index, ++j);
 				if(compareSecondaryIndex(si1, si2, f->type)) {
 					saveIndex(sih, si1, bfFiles, i);
-					if(j == index->length - 1) saveIndex(sih, si2, bfFiles, i);
-				} else j += saveDuplicated(sih, si1, si2, i, j);
+					if(j == (index->length - 1)) saveIndex(sih, si2, bfFiles, i);
+				} else {
+					j += saveDuplicated(sih, si1, si2, i, j);
+					si2 = (SecondaryIndex *) getArrayListObject(index, j);
+					if(compareSecondaryIndex(si1, si2, f->type) && (j == (index->length - 1)))
+						saveIndex(sih, si2, bfFiles, i);
+				}
 			}
 		} else saveIndex(sih, (SecondaryIndex *) getArrayListObject(index, 0), bfFiles, i);
 	}
