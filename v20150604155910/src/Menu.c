@@ -35,6 +35,7 @@ void printMenu() {
 	printf("1. Create new table\n");
 	printf("2. Insert into table\n");
 	printf("3. Browse all from table\n");
+	printf("4. Browse one at time from table\n");
 	printf("0. Save and quit\n");
 
 
@@ -49,6 +50,8 @@ void switchOperation(int op, Database *db) {
 		case 2: insertNewRecordIntoTable(db);
 				break;
 		case 3: browseAllRecords(db);
+				break;
+		case 4: browseOneAtATime(db);
 				break;
 		default:	printf("Invalid operation.\n");
 	}

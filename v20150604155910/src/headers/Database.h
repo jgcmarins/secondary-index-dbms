@@ -43,4 +43,8 @@ ArrayList *buildTableHeader(Table *t);
 
 void printRows(TableView *tv, Table *t, ArrayList *records);
 
+void printRow(TableView *tv, Table *t, ArrayList *records, int i);
+
+void browseOneAtATime(Database *db);
+
 #endif

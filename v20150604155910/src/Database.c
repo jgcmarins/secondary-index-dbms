@@ -141,22 +141,59 @@ ArrayList *buildTableHeader(Table *t) {
 
 void printRows(TableView *tv, Table *t, ArrayList *records) {
 	int i;
-	for(i = 0 ; i < records->length ; i++) {
-		ArrayList *record = getArrayListObject(records, i);
-		ArrayList *strings = rowToString(t, record);
-		printTableRow(tv, strings);
+	for(i = 0 ; i < records->length ; i++) printRow(tv, t, records, i);
+}
 
-		while(strings->length > 0) {
-			char *string = (char *) getArrayListObject(strings, strings->length - 1);
-			removeArrayListObjectFromPosition(strings, strings->length - 1);
-			free(string);
-		}
-		deleteArrayList(strings);
+void printRow(TableView *tv, Table *t, ArrayList *records, int i) {
+	ArrayList *record = getArrayListObject(records, i);
+	ArrayList *strings = rowToString(t, record);
+	printTableRow(tv, strings);
 
-		while(record->length > 0) {
-			void *p = getArrayListObject(record, record->length - 1);
-			removeArrayListObjectFromPosition(record, record->length - 1);
-			free(p);
-		}
+	while(strings->length > 0) {
+		char *string = (char *) getArrayListObject(strings, strings->length - 1);
+		removeArrayListObjectFromPosition(strings, strings->length - 1);
+		free(string);
 	}
+	deleteArrayList(strings);
+
+	while(record->length > 0) {
+		void *p = getArrayListObject(record, record->length - 1);
+		removeArrayListObjectFromPosition(record, record->length - 1);
+		free(p);
+	}
+}
+
+void browseOneAtATime(Database *db) {
+	printf("Insert table name: ");
+	char *tableName = inputReader();
+	SelectionHandler *sh = getSelectionHandler(db->tm, tableName);
+	if(sh != NULL) {
+		ArrayList *names = buildTableHeader(sh->t);
+		TableView *tv = newTableView(names);
+		ArrayList *records = selectAll(sh);
+
+		int i;
+		for(i = 0 ; i < records->length ; i++) {
+			printTableHeader(tv);
+			printRow(tv, sh->t, records, i);
+			if(i < records->length - 1) {
+				printf("Hit <ENTER> to next\n");
+				char *input = inputReader();
+				free(input);
+			}
+		}
+
+		while(records->length > 0) {
+			ArrayList *record = (ArrayList *) getArrayListObject(records, records->length - 1);
+			removeArrayListObjectFromPosition(records, records->length - 1);
+			deleteArrayList(record);
+		}
+		deleteArrayList(records);
+
+		while(names->length > 0) removeArrayListObjectFromPosition(names, names->length - 1);
+		deleteArrayList(names);
+
+		deleteTableView(tv);
+	} else printf("Table does not exists.\n");
+	free(tableName);
 }
