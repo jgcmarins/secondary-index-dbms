@@ -82,16 +82,12 @@ int main(int argc, char *argv[]) {
 	Database *db = newDatabase(fileName);
 	//createNewTable(db);
 
-	//insertFields(getInsertionHandler(tm, fileName));
+	insertNewRecordIntoTable(db);
 
-	displayFields(getTable(db->tm, "tweets"));
+	printRecords(getSelectionHandler(db->tm, "tweets"));
 
-	//insertRecord(getInsertionHandler(tm, fileName));
-
-	/*printRecords(getSelectionHandler(db->tm, fileName));
-
-	Table *t = getTable(db->tm, fileName);
-	displayIndex(t->sih);*/
+	Table *t = getTable(db->tm, "tweets");
+	displayIndex(t->sih);
 
 	deleteDatabase(db);
 	free(fileName);

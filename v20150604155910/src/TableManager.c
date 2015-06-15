@@ -158,22 +158,16 @@ SelectionHandler *getSelectionHandler(TableManager *tm, char *tableName) {
 }
 
 void insertIntoTable(TableManager *tm, char *tableName, ArrayList *record) {
-	char *fileName = buildNameToTablesFiles(tm->path, tableName);
-	InsertionHandler *ih = getInsertionHandler(tm, fileName);
+	InsertionHandler *ih = getInsertionHandler(tm, tableName);
 	insert(ih, record);
-	free(fileName);
 }
 
 ArrayList *selectAllFromTable(TableManager *tm, char *tableName) {
-	char *fileName = buildNameToTablesFiles(tm->path, tableName);
-	SelectionHandler *sh = getSelectionHandler(tm, fileName);
-	free(fileName);
+	SelectionHandler *sh = getSelectionHandler(tm, tableName);
 	return selectAll(sh);
 }
 
 ArrayList *selectBySecondaryIndexFromTable(TableManager *tm, char *tableName, int position, SecondaryIndex *si) {
-	char *fileName = buildNameToTablesFiles(tm->path, tableName);
-	SelectionHandler *sh = getSelectionHandler(tm, fileName);
-	free(fileName);
+	SelectionHandler *sh = getSelectionHandler(tm, tableName);
 	return selectBySecondaryIndex(sh, position, si);
 }

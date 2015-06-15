@@ -65,6 +65,7 @@ void printColumnsNames(TableView *tv) {
 }
 
 void printTableHeader(TableView *tv) {
+	printf("\n\n");
 	printSeparationLine(tv);
 	printColumnsNames(tv);
 	printSeparationLine(tv);

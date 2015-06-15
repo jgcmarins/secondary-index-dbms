@@ -33,4 +33,8 @@ void createNewTable(Database *db);
 
 void insertFields(Table *t);
 
+void insertNewRecordIntoTable(Database *db);
+
+ArrayList *readRecord(Table *t);
+
 #endif

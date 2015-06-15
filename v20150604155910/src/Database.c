@@ -45,16 +45,17 @@ char *buildDabataseName(char *fileName) { // tenso
 
 void createNewTable(Database *db) {
 	printf("Insert table name: ");
-	char *dbName = inputReader();
-	createTable(db->tm, dbName);
-	insertFields(getTable(db->tm, dbName));
-	free(dbName);
+	char *tableName = inputReader();
+	createTable(db->tm, tableName);
+	insertFields(getTable(db->tm, tableName));
+	free(tableName);
 }
 
 void insertFields(Table *t) {
 	printf("Insert fields, using this order:\n");
 	printf("name\ntype (int, long, float, double, char, string)\nkey (normal key, primary key, secondary key)\n");
 	printf("Hit <ENTER> between name, type and key. Hit <ENTER> when done.\n\n");
+
 	while(1) {
 		char *name = inputReader();
 		if(name[0] == '\0') {
@@ -67,4 +68,39 @@ void insertFields(Table *t) {
 		Field *f = newField(name, type, key);
 		addNewField(t->fh, f);
 	}
+}
+
+void insertNewRecordIntoTable(Database *db) {
+	printf("Insert table name: ");
+	char *tableName = inputReader();
+	Table *t = getTable(db->tm, tableName);
+	if(t != NULL) {
+		ArrayList *record = readRecord(t);
+		insertIntoTable(db->tm, tableName, record);
+		while(record->length > 0) {
+			char *string = getArrayListObject(record, record->length - 1);
+			removeArrayListObjectFromPosition(record, record->length - 1);
+			free(string);
+		}
+		deleteArrayList(record);
+	}
+	else printf("Table does not exists.\n");
+
+	free(tableName);
+}
+
+ArrayList *readRecord(Table *t) {
+	displayFields(t);
+	printf("Insert data following fields order. Hit <ENTER> between each data. Hit <ENTER> when done.\n");
+
+	ArrayList *record = newArrayList();
+	while(1) {
+		char *input = inputReader();
+		if(input[0] == '\0') {
+			free(input);
+			break;
+		}
+		setArrayListObject(record, (char *) input, record->length);
+	}
+	return record;
 }
