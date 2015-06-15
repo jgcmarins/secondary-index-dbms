@@ -7,8 +7,7 @@
 * 
 */
 
-#include "headers/InsertionHandler.h"
-#include "headers/SelectionHandler.h"
+#include "headers/Database.h"
 
 char *inputReader() {
 	char *buffer = NULL;
@@ -110,23 +109,21 @@ void printRecords(SelectionHandler *sh) {
 int main(int argc, char *argv[]) {
 
 	char *fileName = inputReader();
-	Table *t = newTable(fileName);
-	InsertionHandler *ih = newInsertionHandler(t);
-	SelectionHandler *sh = newSelectionHandler(t);
+	Database *db = newDatabase(fileName);
+	//createNewTable(db->tm, fileName);
 
-	//insertFields(ih);
+	//insertFields(getInsertionHandler(tm, fileName));
 
-	//displayFields(t);
+	displayFields(getTable(db->tm, fileName));
 
-	insertRecord(ih);
+	//insertRecord(getInsertionHandler(tm, fileName));
 
-	printRecords(sh);
+	printRecords(getSelectionHandler(db->tm, fileName));
 
+	Table *t = getTable(db->tm, fileName);
 	displayIndex(t->sih);
 
-	deleteSelectionHandler(sh);
-	deleteInsertionHandler(ih);
-	deleteTable(t);
+	deleteDatabase(db);
 	free(fileName);
 
 	return 0;
