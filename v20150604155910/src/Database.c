@@ -83,8 +83,7 @@ void insertNewRecordIntoTable(Database *db) {
 			free(string);
 		}
 		deleteArrayList(record);
-	}
-	else printf("Table does not exists.\n");
+	} else printf("Table does not exists.\n");
 
 	free(tableName);
 }
@@ -109,7 +108,7 @@ void browseAllRecords(Database *db) {
 	printf("Insert table name: ");
 	char *tableName = inputReader();
 	SelectionHandler *sh = getSelectionHandler(db->tm, tableName);
-	if(sh->t != NULL) {
+	if(sh != NULL) {
 		ArrayList *names = buildTableHeader(sh->t);
 		TableView *tv = newTableView(names);
 		printTableHeader(tv);
@@ -127,7 +126,7 @@ void browseAllRecords(Database *db) {
 		deleteArrayList(names);
 
 		deleteTableView(tv);
-	}
+	} else printf("Table does not exists.\n");
 	free(tableName);
 }
 

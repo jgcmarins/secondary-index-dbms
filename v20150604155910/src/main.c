@@ -8,19 +8,18 @@
 */
 
 #include "headers/Database.h"
+#include "headers/Menu.h"
 
 int main(int argc, char *argv[]) {
 
+	printf("Insert database name: ");
 	char *fileName = inputReader();
 	Database *db = newDatabase(fileName);
-	//createNewTable(db);
 
-	//insertNewRecordIntoTable(db);
+	runMenu(db);
 
-	browseAllRecords(db);
-
-	Table *t = getTable(db->tm, "tweets");
-	displayIndex(t->sih);
+	/*Table *t = getTable(db->tm, "tweets");
+	displayIndex(t->sih);*/
 
 	deleteDatabase(db);
 	free(fileName);
