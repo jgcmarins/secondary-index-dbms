@@ -35,7 +35,7 @@ void selectTables(TableManager *tm);
 
 void buildTableManager(TableManager *tm);
 
-void createNewTable(TableManager *tm, char *tableName);
+void createTable(TableManager *tm, char *tableName);
 
 void saveTables(TableManager *tm);
 

@@ -13,6 +13,7 @@
 #include "FieldHandler.h"
 #include "SecondaryIndexHandler.h"
 
+#include "InputReader.h"
 #include "NumberConverter.h"
 #include "StringConverter.h"
 

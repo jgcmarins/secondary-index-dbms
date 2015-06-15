@@ -14,7 +14,7 @@ C=gcc
 F=-Wall
 
 #binary
-BIN=build/tweet.db
+BIN=build/dbms
 
 #headers
 H=./src/headers
@@ -23,7 +23,7 @@ H=./src/headers
 M=src/main.c
 
 #library
-LIB=src/ArrayList.c src/NumberConverter.c src/StringConverter.c src/PointersComparator.c src/TableView.c src/BinaryFile.c src/BinaryFileWriter.c src/BinaryFileReader.c src/Field.c src/FieldHandler.c src/SecondaryIndex.c src/SecondaryIndexHandler.c src/Table.c src/InsertionHandler.c src/SelectionHandler.c src/TableManager.c src/Database.c
+LIB=src/ArrayList.c src/InputReader.c src/NumberConverter.c src/StringConverter.c src/PointersComparator.c src/TableView.c src/BinaryFile.c src/BinaryFileWriter.c src/BinaryFileReader.c src/Field.c src/FieldHandler.c src/SecondaryIndex.c src/SecondaryIndexHandler.c src/Table.c src/InsertionHandler.c src/SelectionHandler.c src/TableManager.c src/Database.c
 
 all: clean compile
 clean:

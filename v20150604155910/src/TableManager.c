@@ -106,7 +106,7 @@ void buildTableManager(TableManager *tm) {
 	}
 }
 
-void createNewTable(TableManager *tm, char *tableName) {
+void createTable(TableManager *tm, char *tableName) {
 	char *fileName = buildNameToTablesFiles(tm->path, tableName);
 	setArrayListObject(tm->names, (char *) fileName, tm->names->length);
 	Table *t = newTable(fileName);

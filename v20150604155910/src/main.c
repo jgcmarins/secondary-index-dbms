@@ -9,36 +9,6 @@
 
 #include "headers/Database.h"
 
-char *inputReader() {
-	char *buffer = NULL;
-	int c, i = 0;
-
-	do {
-		c = fgetc(stdin);
-		buffer = (char *) realloc(buffer, sizeof(char)*(i+1));
-		buffer[i++] = c;
-	} while((c != 10) && !feof(stdin));
-
-	buffer[i-1] = '\0';
-
-	return buffer;
-}
-
-void insertFields(InsertionHandler *ih) {
-	while(1) {
-		char *name = inputReader();
-		if(name[0] == '\0') {
-			free(name);
-			break;
-		}
-
-		char *type = inputReader();
-		char *key = inputReader();
-		Field *f = newField(name, type, key);
-		addNewField(ih->t->fh, f);
-	}
-}
-
 void insertRecord(InsertionHandler *ih) {
 	ArrayList *record = newArrayList();
 	while(1) {
@@ -110,18 +80,18 @@ int main(int argc, char *argv[]) {
 
 	char *fileName = inputReader();
 	Database *db = newDatabase(fileName);
-	//createNewTable(db->tm, fileName);
+	//createNewTable(db);
 
 	//insertFields(getInsertionHandler(tm, fileName));
 
-	displayFields(getTable(db->tm, fileName));
+	displayFields(getTable(db->tm, "tweets"));
 
 	//insertRecord(getInsertionHandler(tm, fileName));
 
-	printRecords(getSelectionHandler(db->tm, fileName));
+	/*printRecords(getSelectionHandler(db->tm, fileName));
 
 	Table *t = getTable(db->tm, fileName);
-	displayIndex(t->sih);
+	displayIndex(t->sih);*/
 
 	deleteDatabase(db);
 	free(fileName);

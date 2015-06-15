@@ -29,4 +29,8 @@ void buildDirectory(char *fileName);
 
 char *buildDabataseName(char *fileName);
 
+void createNewTable(Database *db);
+
+void insertFields(Table *t);
+
 #endif
