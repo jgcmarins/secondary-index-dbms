@@ -27,7 +27,7 @@ void deleteSelectionHandler(SelectionHandler *sh) {
 
 ArrayList *selectAll(SelectionHandler *sh) {
 	long fileSize = getBinaryFileSize(getTableFile(sh->t));
-	seekBinaryFile(getTableFile(sh->t), 0L);
+	seekBinaryFile(getTableFile(sh->t), sizeof(long)); //jumping deletion list root
 	ArrayList *records = newArrayList();
 	while(getStreamOffset(getTableFile(sh->t)) < fileSize) {
 		ArrayList *record = selectByOffset(sh, getStreamOffset(getTableFile(sh->t)));

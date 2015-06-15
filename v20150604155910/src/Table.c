@@ -16,6 +16,11 @@ Table *newTable(char *fileName) {
 	t->fieldsFileName = buildNameToTableFiles(fileName, FIELDS);
 
 	t->tableFile = newBinaryFile(t->tableFileName);
+	if(getBinaryFileSize(t->tableFile) == 0) {
+		BinaryFileWriter *bfw = newBinaryFileWriter(t->tableFile, DELIMITER);
+		writeLong(bfw, -1L, 0L);
+		deleteBinaryFileWriter(bfw);
+	}
 	t->fieldsFile = newBinaryFile(t->fieldsFileName);
 
 	t->fh = newFieldHandler(t->fieldsFile);
