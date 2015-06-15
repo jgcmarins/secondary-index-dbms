@@ -104,3 +104,60 @@ ArrayList *readRecord(Table *t) {
 	}
 	return record;
 }
+
+void browseAllRecords(Database *db) {
+	printf("Insert table name: ");
+	char *tableName = inputReader();
+	SelectionHandler *sh = getSelectionHandler(db->tm, tableName);
+	if(sh->t != NULL) {
+		ArrayList *names = buildTableHeader(sh->t);
+		TableView *tv = newTableView(names);
+		printTableHeader(tv);
+		ArrayList *records = selectAll(sh);
+		printRows(tv, sh->t, records);
+
+		while(records->length > 0) {
+			ArrayList *record = (ArrayList *) getArrayListObject(records, records->length - 1);
+			removeArrayListObjectFromPosition(records, records->length - 1);
+			deleteArrayList(record);
+		}
+		deleteArrayList(records);
+
+		while(names->length > 0) removeArrayListObjectFromPosition(names, names->length - 1);
+		deleteArrayList(names);
+
+		deleteTableView(tv);
+	}
+	free(tableName);
+}
+
+ArrayList *buildTableHeader(Table *t) {
+	ArrayList *names = newArrayList();
+	int i;
+	for(i = 0 ; i < t->fh->fields->length ; i++) {
+		setArrayListObject(names, (char *) getFieldName(t->fh, i), i);
+	}
+	return names;
+}
+
+void printRows(TableView *tv, Table *t, ArrayList *records) {
+	int i;
+	for(i = 0 ; i < records->length ; i++) {
+		ArrayList *record = getArrayListObject(records, i);
+		ArrayList *strings = rowToString(t, record);
+		printTableRow(tv, strings);
+
+		while(strings->length > 0) {
+			char *string = (char *) getArrayListObject(strings, strings->length - 1);
+			removeArrayListObjectFromPosition(strings, strings->length - 1);
+			free(string);
+		}
+		deleteArrayList(strings);
+
+		while(record->length > 0) {
+			void *p = getArrayListObject(record, record->length - 1);
+			removeArrayListObjectFromPosition(record, record->length - 1);
+			free(p);
+		}
+	}
+}

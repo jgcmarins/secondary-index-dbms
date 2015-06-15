@@ -37,4 +37,10 @@ void insertNewRecordIntoTable(Database *db);
 
 ArrayList *readRecord(Table *t);
 
+void browseAllRecords(Database *db);
+
+ArrayList *buildTableHeader(Table *t);
+
+void printRows(TableView *tv, Table *t, ArrayList *records);
+
 #endif
