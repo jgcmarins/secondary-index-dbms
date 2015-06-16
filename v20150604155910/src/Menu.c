@@ -58,9 +58,9 @@ void switchOperation(int op, Database *db) {
 				break;
 		case 5: browseByField(db);
 				break;
-		case 6: matchMultipleFields(db);
+		case 6: findMultipleFields(db, op);
 				break;
-		case 7:
+		case 7: findMultipleFields(db, op);
 				break;
 		default:	printf("Invalid operation.\n");
 	}

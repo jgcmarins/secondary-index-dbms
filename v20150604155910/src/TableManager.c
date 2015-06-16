@@ -217,3 +217,36 @@ ArrayList *match(SelectionHandler *sh, ArrayList *index) {
 
 	return result;
 }
+
+ArrayList *merge(SelectionHandler *sh, ArrayList *index) {
+	ArrayList *result = newArrayList();
+	ArrayList *offsets = newArrayList();
+	int i, j;
+	for(i = 0 ; i < index->length ; i++) {
+		ArrayList *idx = (ArrayList *) getArrayListObject(index, i);
+		for(j = 0 ; j < idx->length ; j++) {
+			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(idx, j);
+			long recordOffset = si->recordOffset;
+			long *p = (long *) malloc(sizeof(long));
+			memcpy(p, &recordOffset, sizeof(long));
+			int position = indexOfArrayListObject(offsets, p, compareLong);
+			if(position == -1) setArrayListObject(offsets, p, offsets->length);
+			else free(p);
+		}
+	}
+
+	for(i = 0 ; i < offsets->length ; i++) {
+		long *recordOffset = (long *) getArrayListObject(offsets, i);
+		ArrayList *record = selectByOffset(sh, *recordOffset);
+		setArrayListObject(result, record, result->length);
+	}
+
+	while(offsets->length > 0) {
+		long *p = (long *) getArrayListObject(offsets, offsets->length - 1);
+		removeArrayListObjectFromPosition(offsets, offsets->length - 1);
+		free(p);
+	}
+	deleteArrayList(offsets);
+
+	return result;
+}

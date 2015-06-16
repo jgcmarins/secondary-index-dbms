@@ -238,26 +238,39 @@ void browseByField(Database *db) {
 	free(tableName);
 }
 
-void matchMultipleFields(Database *db) {
+void findMultipleFields(Database *db, int op) {
 	printf("Insert table name: ");
 	char *tableName = inputReader();
 	SelectionHandler *sh = getSelectionHandler(db->tm, tableName);
 	if(sh != NULL) {
 		displayFields(sh->t);
 		ArrayList *index = readMultiplesFields(sh);
-		ArrayList *records = match(sh, index);
+		ArrayList *records = NULL;
 
-		ArrayList *names = buildTableHeader(sh->t);
-		TableView *tv = newTableView(names);
-		printTableHeader(tv);
-		printRows(tv, sh->t, records);
+		if(op == 6) records = match(sh, index);
+		else if(op == 7) records = merge(sh, index);
 
-		while(records->length > 0) {
-			ArrayList *record = (ArrayList *) getArrayListObject(records, records->length - 1);
-			removeArrayListObjectFromPosition(records, records->length - 1);
-			deleteArrayList(record);
+		if(records->length > 0) {
+			ArrayList *names = buildTableHeader(sh->t);
+			TableView *tv = newTableView(names);
+			printTableHeader(tv);
+			printRows(tv, sh->t, records);
+
+			while(records->length > 0) {
+				ArrayList *record = (ArrayList *) getArrayListObject(records, records->length - 1);
+				removeArrayListObjectFromPosition(records, records->length - 1);
+				deleteArrayList(record);
+			}
+			deleteArrayList(records);
+
+			while(names->length > 0) removeArrayListObjectFromPosition(names, names->length - 1);
+			deleteArrayList(names);
+
+			deleteTableView(tv);
+		} else {
+			deleteArrayList(records);
+			printf("No record found.\n");
 		}
-		deleteArrayList(records);
 
 		while(index->length > 0) {
 			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, index->length - 1);
@@ -266,10 +279,6 @@ void matchMultipleFields(Database *db) {
 		}
 		deleteArrayList(index);
 
-		while(names->length > 0) removeArrayListObjectFromPosition(names, names->length - 1);
-		deleteArrayList(names);
-
-		deleteTableView(tv);
 	} else printf("Table does not exists.\n");
 	free(tableName);
 }

@@ -55,4 +55,6 @@ ArrayList *selectBySecondaryIndexFromTable(TableManager *tm, char *tableName, in
 
 ArrayList *match(SelectionHandler *sh, ArrayList *index);
 
+ArrayList *merge(SelectionHandler *sh, ArrayList *index);
+
 #endif
