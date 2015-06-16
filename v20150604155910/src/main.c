@@ -18,9 +18,6 @@ int main(int argc, char *argv[]) {
 
 	runMenu(db);
 
-	/*Table *t = getTable(db->tm, "tweets");
-	displayIndex(t->sih);*/
-
 	deleteDatabase(db);
 	free(fileName);
 

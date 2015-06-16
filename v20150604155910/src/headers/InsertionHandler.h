@@ -16,6 +16,8 @@ typedef struct InsertionHandler {
 	Table *t;
 	BinaryFileWriter *bfw;
 	BinaryFileReader *bfr;
+	int fragment;
+	long previousOffset;
 } InsertionHandler;
 
 InsertionHandler *newInsertionHandler(Table *t);
@@ -36,7 +38,7 @@ long insertChar(InsertionHandler *ih, char *record, long offset);
 
 long insertString(InsertionHandler *ih, char *record, long offset);
 
-long findBestFit(InsertionHandler *ih, ArrayList *record);
+long findWorstFit(InsertionHandler *ih, ArrayList *record);
 
 int calculateRecordSize(InsertionHandler *ih, ArrayList *record);
 

@@ -43,7 +43,7 @@ ArrayList *selectBySecondaryIndex(SelectionHandler *sh, int position, SecondaryI
 	for(i = 0 ; i < index->length ; i++){
 		SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, i);
 		ArrayList *record = selectByOffset(sh, si->recordOffset);
-		setArrayListObject(records, (ArrayList *) record, records->length);
+		if(record != NULL) setArrayListObject(records, (ArrayList *) record, records->length);
 	}
 
 	while(index->length > 0) {
@@ -84,6 +84,9 @@ ArrayList *selectByOffset(SelectionHandler *sh, long offset) {
 			}
 		}
 		return record;
+	} else {
+		deleted *= -1;
+		seekBinaryFile(getTableFile(sh->t), (offset + sizeof(int) + deleted));
 	}
 	return NULL;
 }

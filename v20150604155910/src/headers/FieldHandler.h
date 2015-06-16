@@ -17,10 +17,13 @@
 
 #define DELIMITER '\0'
 
+#define HEADER (sizeof(int) + sizeof(long))
+
 typedef struct FieldHandler {
 	BinaryFileWriter *bfw;
 	BinaryFileReader *bfr;
 	ArrayList *fields;
+	int min;
 } FieldHandler;
 
 FieldHandler *newFieldHandler(BinaryFile *bf);
@@ -42,5 +45,7 @@ char *getFieldType(FieldHandler *fh, int position);
 char *getFieldKey(FieldHandler *fh, int position);
 
 int getNumberOfFields(FieldHandler *fh);
+
+void calculateMin(FieldHandler *fh);
 
 #endif

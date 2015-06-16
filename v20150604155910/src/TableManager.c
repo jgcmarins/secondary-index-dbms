@@ -17,6 +17,7 @@ TableManager *newTableManager(char *fileName) {
 	tm->tables = newArrayList();
 	tm->insert = newArrayList();
 	tm->select = newArrayList();
+	tm->deleter = newArrayList();
 
 	buildTableManager(tm);
 
@@ -24,6 +25,15 @@ TableManager *newTableManager(char *fileName) {
 }
 
 void deleteTableManager(TableManager *tm) {
+	if(tm->deleter != NULL) {
+		while(tm->deleter->length > 0) {
+			DeletionHandler *dh = (DeletionHandler *) getArrayListObject(tm->deleter, tm->deleter->length - 1);
+			removeArrayListObjectFromPosition(tm->deleter, tm->deleter->length - 1);
+			deleteDeletionHandler(dh);
+		}
+		deleteArrayList(tm->deleter);
+	}
+
 	if(tm->select != NULL) {
 		while(tm->select->length > 0) {
 			SelectionHandler *sh = (SelectionHandler *) getArrayListObject(tm->select, tm->select->length - 1);
@@ -107,6 +117,8 @@ void buildTableManager(TableManager *tm) {
 			setArrayListObject(tm->insert, (InsertionHandler *) ih, tm->insert->length);
 			SelectionHandler *sh = newSelectionHandler(t);
 			setArrayListObject(tm->select, (SelectionHandler *) sh, tm->select->length);
+			DeletionHandler *dh = newDeletionHandler(t);
+			setArrayListObject(tm->deleter, (DeletionHandler *) dh, tm->deleter->length);
 		}
 	}
 }
@@ -120,6 +132,8 @@ void createTable(TableManager *tm, char *tableName) {
 	setArrayListObject(tm->insert, (InsertionHandler *) ih, tm->insert->length);
 	SelectionHandler *sh = newSelectionHandler(t);
 	setArrayListObject(tm->select, (SelectionHandler *) sh, tm->select->length);
+	DeletionHandler *dh = newDeletionHandler(t);
+	setArrayListObject(tm->deleter, (DeletionHandler *) dh, tm->deleter->length);
 	saveTables(tm);
 }
 
@@ -159,6 +173,14 @@ SelectionHandler *getSelectionHandler(TableManager *tm, char *tableName) {
 	int i = indexOfArrayListObject(tm->names, (char *) fileName, compareString);
 	free(fileName);
 	if(i != -1) return (SelectionHandler *) getArrayListObject(tm->select, i);
+	return NULL;
+}
+
+DeletionHandler *getDeletionHandler(TableManager *tm, char *tableName) {
+	char *fileName = buildNameToTablesFiles(tm->path, tableName);
+	int i = indexOfArrayListObject(tm->names, (char *) fileName, compareString);
+	free(fileName);
+	if(i != -1) return (DeletionHandler *) getArrayListObject(tm->deleter, i);
 	return NULL;
 }
 
@@ -205,7 +227,7 @@ ArrayList *match(SelectionHandler *sh, ArrayList *index) {
 	for(i = 0 ; i < offsets->length ; i++) {
 		long *recordOffset = (long *) getArrayListObject(offsets, i);
 		ArrayList *record = selectByOffset(sh, *recordOffset);
-		setArrayListObject(result, record, result->length);
+		if(record != NULL) setArrayListObject(result, record, result->length);
 	}
 
 	while(offsets->length > 0) {
@@ -238,7 +260,7 @@ ArrayList *merge(SelectionHandler *sh, ArrayList *index) {
 	for(i = 0 ; i < offsets->length ; i++) {
 		long *recordOffset = (long *) getArrayListObject(offsets, i);
 		ArrayList *record = selectByOffset(sh, *recordOffset);
-		setArrayListObject(result, record, result->length);
+		if(record != NULL) setArrayListObject(result, record, result->length);
 	}
 
 	while(offsets->length > 0) {
@@ -249,4 +271,10 @@ ArrayList *merge(SelectionHandler *sh, ArrayList *index) {
 	deleteArrayList(offsets);
 
 	return result;
+}
+
+void deleteBySecondaryIndexFromTable(TableManager *tm, char *tableName, int position, long offset) {
+	DeletionHandler *dh = getDeletionHandler(tm, tableName);
+	deleteByOffset(dh, offset);
+	removeAllSecondaryIndexByRecordOffset(dh->t->sih, offset);
 }

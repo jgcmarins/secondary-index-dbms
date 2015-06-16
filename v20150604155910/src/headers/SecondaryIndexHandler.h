@@ -86,6 +86,8 @@ ArrayList *searchSecondaryKey(SecondaryIndexHandler *sih, int position, Secondar
 
 int indexOfField(SecondaryIndexHandler *sih, char *fieldName);
 
+void removeAllSecondaryIndexByRecordOffset(SecondaryIndexHandler *sih, long recordOffset);
+
 void displayIndex(SecondaryIndexHandler *sih);
 
 void displayIndexRow(ArrayList *columnName, ArrayList *rows);

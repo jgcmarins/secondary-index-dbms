@@ -31,7 +31,7 @@ void cleanScreen() {
 }
 
 void printMenu() {
-	cleanScreen();
+	//cleanScreen();
 	printf("1. Create new table\n");
 	printf("2. Insert into table\n");
 	printf("3. Browse all from table\n");
@@ -39,6 +39,7 @@ void printMenu() {
 	printf("5. Browse by field\n");
 	printf("6. Match and Browse multiples fields\n");
 	printf("7. Merge and Browse multiples fields\n");
+	printf("8. Delete by field\n");
 	printf("0. Save and quit\n");
 
 
@@ -46,7 +47,7 @@ void printMenu() {
 }
 
 void switchOperation(int op, Database *db) {
-	cleanScreen();
+	//cleanScreen();
 	switch(op) {
 		case 1: createNewTable(db);
 				break;
@@ -61,6 +62,8 @@ void switchOperation(int op, Database *db) {
 		case 6: findMultipleFields(db, op);
 				break;
 		case 7: findMultipleFields(db, op);
+				break;
+		case 8: deleteByField(db);
 				break;
 		default:	printf("Invalid operation.\n");
 	}

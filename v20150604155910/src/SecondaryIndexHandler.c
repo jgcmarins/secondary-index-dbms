@@ -455,6 +455,20 @@ ArrayList *searchSecondaryKey(SecondaryIndexHandler *sih, int position, Secondar
 	return result;
 }
 
+void removeAllSecondaryIndexByRecordOffset(SecondaryIndexHandler *sih, long recordOffset) {
+	int i, j;
+	for(i = 0 ; i < sih->index->length ; i++) {
+		ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
+		for(j = 0 ; j < index->length ; j++) {
+			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, j);
+			if(si->recordOffset == recordOffset) {
+				removeArrayListObjectFromPosition(index, j);
+				deleteSecondaryIndex(si);
+			}
+		}
+	}
+}
+
 void displayIndex(SecondaryIndexHandler *sih) {
 	ArrayList *columnName = newArrayList();
 	setArrayListObject(columnName, (char *) RECORDOFFSET, columnName->length);

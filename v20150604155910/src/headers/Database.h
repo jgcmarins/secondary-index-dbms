@@ -53,4 +53,8 @@ void findMultipleFields(Database *db, int op);
 
 ArrayList *readMultiplesFields();
 
+void deleteByField(Database *db);
+
+void executeDelete(Database *db, char *tableName, int position, SecondaryIndex *si, int number);
+
 #endif

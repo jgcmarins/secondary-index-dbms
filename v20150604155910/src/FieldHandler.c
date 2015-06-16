@@ -14,6 +14,7 @@ FieldHandler *newFieldHandler(BinaryFile *bf) {
 	fh->bfw = newBinaryFileWriter(bf, DELIMITER);
 	fh->bfr = newBinaryFileReader(bf, DELIMITER);
 	fh->fields = newArrayList();
+	fh->min = 0;
 
 	buildFieldHandler(fh);
 
@@ -48,6 +49,7 @@ void buildFieldHandler(FieldHandler *fh) {
 			setArrayListObject(fh->fields, (Field *) f, fh->fields->length);
 		}
 	}
+	calculateMin(fh);
 }
 
 void addNewField(FieldHandler *fh, Field *f) {
@@ -55,6 +57,7 @@ void addNewField(FieldHandler *fh, Field *f) {
 	writeString(fh->bfw, f->name, getBinaryFileSize(fh->bfw->bf));
 	writeString(fh->bfw, f->type, getBinaryFileSize(fh->bfw->bf));
 	writeString(fh->bfw, f->key, getBinaryFileSize(fh->bfw->bf));
+	calculateMin(fh);
 }
 
 Field *getField(FieldHandler *fh, int position) {
@@ -87,4 +90,18 @@ char *getFieldKey(FieldHandler *fh, int position) {
 
 int getNumberOfFields(FieldHandler *fh) {
 	return fh->fields->length;
+}
+
+void calculateMin(FieldHandler *fh) {
+	fh->min = 0;
+	int i;
+	for(i = 0 ; i < fh->fields->length ; i++) {
+		if(!strcmp(getFieldType(fh, i), INT)) fh->min += sizeof(int);
+		else if(!strcmp(getFieldType(fh, i), LONG)) fh->min += sizeof(long);
+		else if(!strcmp(getFieldType(fh, i), FLOAT)) fh->min += sizeof(float);
+		else if(!strcmp(getFieldType(fh, i), DOUBLE)) fh->min += sizeof(double);
+		else if(!strcmp(getFieldType(fh, i), CHAR)) fh->min += sizeof(char);
+		else if(!strcmp(getFieldType(fh, i), STRING)) fh->min += (sizeof(char)*2);
+	}
+	fh->min += HEADER;
 }

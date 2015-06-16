@@ -53,9 +53,9 @@ void createNewTable(Database *db) {
 }
 
 void insertFields(Table *t) {
-	printf("Insert fields, using this order:\n");
-	printf("name\ntype (int, long, float, double, char, string)\nkey (normal key, primary key, secondary key)\n");
-	printf("Hit <ENTER> between name, type and key. Hit <ENTER> when done.\n\n");
+	printf("Insert fields, using this order:\n\n");
+	printf("name\ntype (int, long, float, double, char, string)\nkey (normal key, primary key, secondary key)\n\n");
+	printf("Type one input per line. Hit <ENTER> when done.\n\n");
 
 	while(1) {
 		char *name = inputReader();
@@ -91,7 +91,7 @@ void insertNewRecordIntoTable(Database *db) {
 
 ArrayList *readRecord(Table *t) {
 	displayFields(t);
-	printf("Insert data following fields order. Hit <ENTER> between each data. Hit <ENTER> when done.\n");
+	printf("\n\nInsert data following fields order.\nType one data per line. Hit <ENTER> when done.\n\nInput:\n");
 
 	ArrayList *record = newArrayList();
 	while(1) {
@@ -310,4 +310,65 @@ ArrayList *readMultiplesFields(SelectionHandler *sh) {
 	}
 
 	return index;
+}
+
+void deleteByField(Database *db) {
+	printf("Insert table name: ");
+	char *tableName = inputReader();
+	DeletionHandler *dh = getDeletionHandler(db->tm, tableName);
+	if(dh != NULL) {
+		displayFields(dh->t);
+		printf("Insert field name: ");
+		char *fieldName = inputReader();
+		int position = indexOfField(dh->t->sih, fieldName);
+		if(position != -1) {
+			printf("Insert value: ");
+			char *value = inputReader();
+			SecondaryIndex *si = createTemporarySecondaryIndex(dh->t->sih, position, value);
+			ArrayList *records = selectBySecondaryIndexFromTable(db->tm, tableName, position, si);
+
+			ArrayList *names = buildTableHeader(dh->t);
+			TableView *tv = newTableView(names);
+			printTableHeader(tv);
+			int i;
+			for(i = 0 ; i < records->length ; i++) {
+				printf("%d\n", i+1);
+				printRow(tv, dh->t, records, i);
+			}
+
+			char *chosen = inputReader();
+			int number = stringToInt(chosen);
+			free(chosen);
+
+			if((number >= 1) && (number <= records->length)) {
+				number--;
+				executeDelete(db, tableName, position, si, number);
+			} else printf("Invalid record.\n");
+
+			while(records->length > 0) {
+				ArrayList *record = (ArrayList *) getArrayListObject(records, records->length - 1);
+				removeArrayListObjectFromPosition(records, records->length - 1);
+				deleteArrayList(record);
+			}
+			deleteArrayList(records);
+
+			while(names->length > 0) removeArrayListObjectFromPosition(names, names->length - 1);
+			deleteArrayList(names);
+
+			deleteTableView(tv);
+			deleteSecondaryIndex(si);
+			free(value);
+		} else printf("Field does not apply.\n");
+		free(fieldName);
+	} else printf("Table does not exists.\n");
+	free(tableName);
+}
+
+void executeDelete(Database *db, char *tableName, int position, SecondaryIndex *si, int i) {
+	SelectionHandler *sh = getSelectionHandler(db->tm, tableName);
+	ArrayList *index = searchSecondaryKey(sh->t->sih, position, si);
+	SecondaryIndex *recordIndex = (SecondaryIndex *) getArrayListObject(index, i);
+	deleteBySecondaryIndexFromTable(db->tm, tableName, position, recordIndex->recordOffset);
+	while(index->length > 0) removeArrayListObjectFromPosition(index, index->length - 1);
+	deleteArrayList(index);
 }

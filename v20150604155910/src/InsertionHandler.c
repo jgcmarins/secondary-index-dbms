@@ -14,6 +14,8 @@ InsertionHandler *newInsertionHandler(Table *t) {
 	ih->t = t;
 	ih->bfw = newBinaryFileWriter(getTableFile(t), DELIMITER);
 	ih->bfr = newBinaryFileReader(getTableFile(t), DELIMITER);
+	ih->fragment = 0;
+	ih->previousOffset = 0L;
 
 	return ih;
 }
@@ -26,13 +28,17 @@ void deleteInsertionHandler(InsertionHandler *ih) {
 }
 
 void insert(InsertionHandler *ih, ArrayList *record) {
-	long offset = findBestFit(ih, record);
+	long offset = findWorstFit(ih, record);
 
 	long recordOffset = offset;
 	ArrayList *secondaryKeys = newArrayList();
 
-	writeInt(ih->bfw, calculateRecordSize(ih, record), offset);
+	int recordSize = calculateRecordSize(ih, record);
+	writeInt(ih->bfw, recordSize, offset);
 	offset += sizeof(int);
+	long next;
+	if(ih->fragment > 0) next = readLong(ih->bfr, offset);
+
 	int i;
 	for(i = 0 ; i < record->length ; i++) {
 		char *type = getFieldType(ih->t->fh, i);
@@ -46,6 +52,18 @@ void insert(InsertionHandler *ih, ArrayList *record) {
 		//printf("\n");
 		if(!strcmp(getFieldKey(ih->t->fh, i), SECONDARY_KEY))
 			setArrayListObject(secondaryKeys, getArrayListObject(record, i), secondaryKeys->length);
+	}
+
+	if(ih->fragment > 0) {
+		printf("fragmentou\n");
+		ih->fragment -= sizeof(int);
+		ih->fragment *= -1;
+		printf("registrando no offset %ld o fragmento de tamanho %d que aponta para %ld\n", offset, ih->fragment, next);
+		writeInt(ih->bfw, ih->fragment, offset);
+		writeLong(ih->bfw, next, (offset + sizeof(int)));
+		if(ih->previousOffset != 0L) writeLong(ih->bfw, offset, (ih->previousOffset + sizeof(int)));
+		else writeLong(ih->bfw, offset, ih->previousOffset);
+		ih->fragment = 0;
 	}
 
 	insertSecondaryIndex(ih->t->sih, secondaryKeys, recordOffset);
@@ -95,7 +113,42 @@ long insertString(InsertionHandler *ih, char *record, long offset) {
 	return offset += (strlen(record) + 1);
 }
 
-long findBestFit(InsertionHandler *ih, ArrayList *record) {
+long findWorstFit(InsertionHandler *ih, ArrayList *record) {
+	long head = readLong(ih->bfr, 0L);
+	long previousOffset = 0L;
+	if(head == -1) return getBinaryFileSize(ih->t->tableFile);
+	else {
+		printf("head: %ld\n", head);
+		int size = calculateRecordSize(ih, record);
+		size += ih->t->fh->min;
+		int biggestSize = 0;
+		long worst = -1;
+		while(head != -1) {
+			seekBinaryFile(ih->bfr->bf, head);
+			printf("no offset %ld ", getStreamOffset(ih->bfr->bf));
+			int currentSize = readInt(ih->bfr, getStreamOffset(ih->bfr->bf));
+			printf("encontrei %d\n", currentSize);
+			currentSize *= (-1);
+			if(currentSize > size) {
+				if(currentSize > biggestSize) {
+					printf("que serve\n");
+					biggestSize = currentSize;
+					worst = head;
+					ih->fragment = biggestSize - size;
+					ih->previousOffset = previousOffset;
+					printf("previous: %ld\n", ih->previousOffset);
+				}
+			}
+			getchar();
+			getchar();
+			previousOffset = head;
+			seekBinaryFile(ih->bfr->bf, (head + sizeof(int)));
+			head = readLong(ih->bfr, getStreamOffset(ih->bfr->bf));
+			printf("o offset anterior era %ld... agora estou indo para %ld\n", previousOffset, head);
+		}
+
+		if(worst != -1) return worst;
+	}
 	return getBinaryFileSize(ih->t->tableFile);
 }
 
@@ -108,7 +161,7 @@ int calculateRecordSize(InsertionHandler *ih, ArrayList *record) {
 		else if(!strcmp(type, FLOAT)) size += sizeof(float);
 		else if(!strcmp(type, DOUBLE)) size += sizeof(double);
 		else if(!strcmp(type, CHAR)) size += sizeof(char);
-		else if(!strcmp(type, STRING)) size += (sizeof(char)*(strlen((char *) getArrayListObject(record, i))));
+		else if(!strcmp(type, STRING)) size += (sizeof(char)*(strlen((char *) getArrayListObject(record, i)) + 1));
 	}
 	return size;
 }
