@@ -48,6 +48,7 @@ void createNewTable(Database *db) {
 	char *tableName = inputReader();
 	createTable(db->tm, tableName);
 	insertFields(getTable(db->tm, tableName));
+	db->tm = updateTableManager(db->tm, db->dbName);
 	free(tableName);
 }
 

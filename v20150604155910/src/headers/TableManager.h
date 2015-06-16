@@ -29,6 +29,8 @@ TableManager *newTableManager(char *fileName);
 
 void deleteTableManager(TableManager *tm);
 
+TableManager *updateTableManager(TableManager *tm, char *fileName);
+
 char *buildNameToTablesFiles(char *fileName, const char *extension);
 
 void selectTables(TableManager *tm);

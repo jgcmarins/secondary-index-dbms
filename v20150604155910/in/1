@@ -1,4 +1,5 @@
 TwitterDatabase
+1
 tweets
 user
 string
@@ -21,3 +22,5 @@ normal key
 view_counter
 long
 normal key
+
+0

@@ -42,11 +42,3 @@ runin1:
 	$(BIN) < in/1
 valgrindin1:
 	valgrind $(BIN) < in/1
-runin2:
-	$(BIN) < in/2
-valgrindin2:
-	valgrind $(BIN) < in/2
-runin3:
-	$(BIN) < in/3
-valgrindin3:
-	valgrind $(BIN) < in/3

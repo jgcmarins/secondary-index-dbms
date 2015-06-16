@@ -16,7 +16,7 @@ void runMenu(Database *db) {
 		int op = atoi(input);
 		free(input);
 
-		if(!op) break;
+		if(op == 0) break;
 
 		switchOperation(op, db);
 	}

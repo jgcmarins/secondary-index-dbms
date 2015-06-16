@@ -66,6 +66,11 @@ void deleteTableManager(TableManager *tm) {
 	if(tm != NULL) free(tm);
 }
 
+TableManager *updateTableManager(TableManager *tm, char *fileName) {
+	deleteTableManager(tm);
+	return newTableManager(fileName);
+}
+
 char *buildNameToTablesFiles(char *fileName, const char *extension) { // tenso
 	char *string = (char *) malloc(sizeof(char)*(strlen(fileName) + strlen(extension) + 1));
 	memcpy(string, fileName, sizeof(char)*(strlen(fileName)));

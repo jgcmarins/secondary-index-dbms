@@ -52,10 +52,10 @@ ArrayList *buildSecondaryIndexList(Table *t) {
 	ArrayList *secondaryFields = newArrayList();
 	int i;
 	for(i = 0 ; i < getNumberOfFields(t->fh) ; i++) {
-		if(!strcmp(SECONDARY_KEY, getFieldKey(t->fh, i)))
+		if(!strcmp(SECONDARY_KEY, getFieldKey(t->fh, i))) {
 			setArrayListObject(secondaryFields, (Field *) getField(t->fh, i), secondaryFields->length);
+		}
 	}
-	
 	return secondaryFields;
 }
 
