@@ -45,6 +45,12 @@ ArrayList *selectBySecondaryIndex(SelectionHandler *sh, int position, SecondaryI
 		ArrayList *record = selectByOffset(sh, si->recordOffset);
 		setArrayListObject(records, (ArrayList *) record, records->length);
 	}
+
+	while(index->length > 0) {
+		removeArrayListObjectFromPosition(index, index->length - 1);
+	}
+	deleteArrayList(index);
+
 	return records;
 }
 

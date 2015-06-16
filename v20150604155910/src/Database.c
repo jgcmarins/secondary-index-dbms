@@ -171,7 +171,7 @@ void browseOneAtATime(Database *db) {
 	if(sh != NULL) {
 		ArrayList *names = buildTableHeader(sh->t);
 		TableView *tv = newTableView(names);
-		ArrayList *records = selectAll(sh);
+		ArrayList *records = selectAllFromTable(db->tm, tableName);
 
 		int i;
 		for(i = 0 ; i < records->length ; i++) {
@@ -195,6 +195,45 @@ void browseOneAtATime(Database *db) {
 		deleteArrayList(names);
 
 		deleteTableView(tv);
+	} else printf("Table does not exists.\n");
+	free(tableName);
+}
+
+void browseByField(Database *db) {
+	printf("Insert table name: ");
+	char *tableName = inputReader();
+	SelectionHandler *sh = getSelectionHandler(db->tm, tableName);
+	if(sh != NULL) {
+		displayFields(sh->t);
+		printf("Insert field name: ");
+		char *fieldName = inputReader();
+		int position = indexOfField(sh->t->sih, fieldName);
+		if(position != -1) {
+			printf("Insert value: ");
+			char *value = inputReader();
+			SecondaryIndex *si = createTemporarySecondaryIndex(sh->t->sih, position, value);
+			ArrayList *records = selectBySecondaryIndexFromTable(db->tm, tableName, position, si);
+
+			ArrayList *names = buildTableHeader(sh->t);
+			TableView *tv = newTableView(names);
+			printTableHeader(tv);
+			printRows(tv, sh->t, records);
+
+			while(records->length > 0) {
+				ArrayList *record = (ArrayList *) getArrayListObject(records, records->length - 1);
+				removeArrayListObjectFromPosition(records, records->length - 1);
+				deleteArrayList(record);
+			}
+			deleteArrayList(records);
+
+			while(names->length > 0) removeArrayListObjectFromPosition(names, names->length - 1);
+			deleteArrayList(names);
+
+			deleteTableView(tv);
+			deleteSecondaryIndex(si);
+			free(value);
+		} else printf("Field does not apply.\n");
+		free(fieldName);
 	} else printf("Table does not exists.\n");
 	free(tableName);
 }

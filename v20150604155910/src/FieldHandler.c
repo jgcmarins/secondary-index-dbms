@@ -62,6 +62,14 @@ Field *getField(FieldHandler *fh, int position) {
 	return f;
 }
 
+Field *getFieldByName(FieldHandler *fh, char *fieldName) {
+	int i;
+	for(i = 0 ; i < fh->fields->length ; i++) {
+		if(!strcmp(getFieldName(fh, i), fieldName)) return getField(fh, i);
+	}
+	return NULL;
+}
+
 char *getFieldName(FieldHandler *fh, int position) {
 	Field *f = (Field *) getArrayListObject(fh->fields, position);
 	return f->name;

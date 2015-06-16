@@ -62,6 +62,8 @@ ArrayList *createNewSecondaryIndex(SecondaryIndexHandler *sih, ArrayList *second
 
 void addIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, int position);
 
+SecondaryIndex *createTemporarySecondaryIndex(SecondaryIndexHandler *sih, int position, char *value);
+
 int compareSecondaryIndex(SecondaryIndex *s1, SecondaryIndex *s2, char *type);
 
 int compareIntSecondaryIndex(void *o1, void *o2);
@@ -79,6 +81,8 @@ int compareStringSecondaryIndex(void *o1, void *o2);
 SecondaryIndex *selectSecondaryIndex(BinaryFile *bf, long offset, char* type);
 
 ArrayList *searchSecondaryKey(SecondaryIndexHandler *sih, int position, SecondaryIndex *si);
+
+int indexOfField(SecondaryIndexHandler *sih, char *fieldName);
 
 void displayIndex(SecondaryIndexHandler *sih);
 

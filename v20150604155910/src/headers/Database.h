@@ -47,4 +47,6 @@ void printRow(TableView *tv, Table *t, ArrayList *records, int i);
 
 void browseOneAtATime(Database *db);
 
+void browseByField(Database *db);
+
 #endif

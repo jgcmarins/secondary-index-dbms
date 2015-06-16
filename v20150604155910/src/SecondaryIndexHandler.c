@@ -141,13 +141,6 @@ void updateFiles(SecondaryIndexHandler *sih) {
 		ArrayList *index = (ArrayList *) getArrayListObject(sih->index, i);
 		Field *f = (Field *) getArrayListObject(sih->fields, i);
 
-		/*printf("insercao:\n");
-		int k;
-		for(k = 0 ; k < index->length ; k++) {
-			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, k);
-			printf("\"%s\"\n", (char *) si->value);
-		}*/
-
 		BinaryFile *bfFiles = (BinaryFile *) getArrayListObject(sih->files, i);
 		overwriteBinaryFile(bfFiles);
 		seekBinaryFile(bfFiles, 0L);
@@ -302,6 +295,38 @@ void addIndex(SecondaryIndexHandler *sih, SecondaryIndex *si, int position) {
 	else if(!strcmp(type, STRING)) addArrayListObject(index, si, compareStringSecondaryIndex);
 }
 
+SecondaryIndex *createTemporarySecondaryIndex(SecondaryIndexHandler *sih, int position, char *value) {
+	Field *f = (Field *) getArrayListObject(sih->fields, position);
+	void *p = NULL;
+	if(!strcmp(f->type, INT)) {
+		int number = stringToInt(value);
+		p = (int *) realloc(p, sizeof(int));
+		memcpy(p, &number, sizeof(int));
+	} else if(!strcmp(f->type, LONG)) {
+		long number = stringToLong(value);
+		p = (long *) realloc(p, sizeof(long));
+		memcpy(p, &number, sizeof(long));
+	} else if(!strcmp(f->type, FLOAT)) {
+		float number = stringToInt(value);
+		p = (float *) realloc(p, sizeof(float));
+		memcpy(p, &number, sizeof(float));
+	} else if(!strcmp(f->type, DOUBLE)) {
+		double number = stringToInt(value);
+		p = (double *) realloc(p, sizeof(double));
+		memcpy(p, &number, sizeof(double));
+	} else if(!strcmp(f->type, CHAR)) {
+		p = (char *) realloc(p, sizeof(char));
+		memcpy(p, value, sizeof(char));
+	} else if(!strcmp(f->type, STRING)) {
+		char *temp = (char *) malloc(sizeof(char)*(strlen(value) + 1));
+		memcpy(temp, value, sizeof(char)*(strlen(value)));
+		temp[strlen(value)] = '\0';
+		p = (char *) temp;
+	}
+
+	return newSecondaryIndex(p, NO_NEXT, NO_NEXT);
+}
+
 int compareSecondaryIndex(SecondaryIndex *si1, SecondaryIndex *si2, char *type) {
 	if(!strcmp(type, INT)) return(compareIntSecondaryIndex(si1, si2));
 	else if(!strcmp(type, LONG)) return(compareLongSecondaryIndex(si1, si2));
@@ -385,6 +410,15 @@ SecondaryIndex *selectSecondaryIndex(BinaryFile *bf, long offset, char* type) {
 	deleteBinaryFileReader(bfr);
 
 	return newSecondaryIndex(p, recordOffset, nextOffset);
+}
+
+int indexOfField(SecondaryIndexHandler *sih, char *fieldName) {
+	int i;
+	for(i = 0 ; i < sih->fields->length ; i++) {
+		Field *f = getArrayListObject(sih->fields, i);
+		if(!strcmp(f->name, fieldName)) return i;
+	}
+	return -1;
 }
 
 ArrayList *searchSecondaryKey(SecondaryIndexHandler *sih, int position, SecondaryIndex *si) {

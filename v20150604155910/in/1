@@ -7,7 +7,7 @@ secondary key
 text
 string
 normal key
-location
+coordinates
 string
 secondary key
 language
@@ -22,5 +22,138 @@ normal key
 view_counter
 long
 normal key
+
+
+2
+tweets
+@joao
+AUHAUAHUAHAUHA KKKKKKKKKKK LOL
+sao carlos
+pt_BR
+10
+5
+100
+
+
+2
+tweets
+@gonzo
+python python python
+sao paulo
+en_US
+20
+15
+200
+
+
+2
+tweets
+@joao
+AUHAUAHUAHAUHA KKKKKKKKKKK LOL
+sao carlos
+pt_BR
+10
+5
+100
+
+
+2
+tweets
+@gonzo
+python python python
+sao paulo
+en_US
+20
+15
+200
+
+
+2
+tweets
+@joao
+AUHAUAHUAHAUHA KKKKKKKKKKK LOL
+sao carlos
+pt_BR
+10
+5
+100
+
+
+2
+tweets
+@gonzo
+python python python
+sao paulo
+en_US
+20
+15
+200
+
+
+2
+tweets
+@joao
+AUHAUAHUAHAUHA KKKKKKKKKKK LOL
+sao carlos
+pt_BR
+10
+5
+100
+
+
+2
+tweets
+@gonzo
+python python python
+sao paulo
+en_US
+20
+15
+200
+
+
+2
+tweets
+@joao
+AUHAUAHUAHAUHA KKKKKKKKKKK LOL
+sao carlos
+pt_BR
+10
+5
+100
+
+
+2
+tweets
+@gonzo
+python python python
+sao paulo
+en_US
+20
+15
+200
+
+
+2
+tweets
+@joao
+AUHAUAHUAHAUHA KKKKKKKKKKK LOL
+sao carlos
+pt_BR
+10
+5
+100
+
+
+2
+tweets
+@gonzo
+python python python
+sao paulo
+en_US
+20
+15
+200
+
 
 0
