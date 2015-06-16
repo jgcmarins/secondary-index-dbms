@@ -12,6 +12,7 @@
 
 int main(int argc, char *argv[]) {
 
+	clearScreen();
 	printf("Insert database name: ");
 	char *fileName = inputReader();
 	Database *db = newDatabase(fileName);

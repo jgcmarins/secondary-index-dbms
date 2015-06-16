@@ -336,6 +336,7 @@ void deleteByField(Database *db) {
 				printRow(tv, dh->t, records, i);
 			}
 
+			printf("\n\nInsert the number of the record to be deleted: ");
 			char *chosen = inputReader();
 			int number = stringToInt(chosen);
 			free(chosen);

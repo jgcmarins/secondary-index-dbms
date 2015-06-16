@@ -26,18 +26,18 @@ void deleteDeletionHandler(DeletionHandler *dh) {
 }
 
 void deleteByOffset(DeletionHandler *dh, long offset) {
-	long head = readLong(dh->bfr, 0L);
+	long head = readLong(dh->bfr, 0L); // read head
 	printf("head: %ld\n", head);
 
-	seekBinaryFile(dh->bfr->bf, offset);
+	seekBinaryFile(dh->bfr->bf, offset); // point to offset
 	int size = readInt(dh->bfr, getStreamOffset(dh->bfr->bf));
-	size *= -1;
+	size *= -1; // delete
 
 	seekBinaryFile(dh->bfw->bf, offset);
-	writeInt(dh->bfw, size, getStreamOffset(dh->bfw->bf));
+	writeInt(dh->bfw, size, getStreamOffset(dh->bfw->bf)); // write deleted
 
 	seekBinaryFile(dh->bfw->bf, (offset + sizeof(int)));
-	writeLong(dh->bfw, head, getStreamOffset(dh->bfw->bf));
+	writeLong(dh->bfw, head, getStreamOffset(dh->bfw->bf)); // write head
 
-	writeLong(dh->bfw, offset, 0L);
+	writeLong(dh->bfw, offset, 0L); // updated head with new offset
 }

@@ -14,7 +14,7 @@
 
 void runMenu(Database *db);
 
-void cleanScreen();
+void clearScreen();
 
 void printMenu();
 

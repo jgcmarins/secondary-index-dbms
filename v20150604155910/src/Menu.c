@@ -22,7 +22,7 @@ void runMenu(Database *db) {
 	}
 }
 
-void cleanScreen() {
+void clearScreen() {
 	#ifdef _WIN32
 		system("cls");
 	#else
@@ -31,7 +31,7 @@ void cleanScreen() {
 }
 
 void printMenu() {
-	//cleanScreen();
+	clearScreen();
 	printf("1. Create new table\n");
 	printf("2. Insert into table\n");
 	printf("3. Browse all from table\n");
@@ -47,7 +47,7 @@ void printMenu() {
 }
 
 void switchOperation(int op, Database *db) {
-	//cleanScreen();
+	clearScreen();
 	switch(op) {
 		case 1: createNewTable(db);
 				break;
