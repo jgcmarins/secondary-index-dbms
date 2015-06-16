@@ -1,0 +1,159 @@
+LibraryDatabase
+1
+books
+title
+string
+normal key
+author
+string
+secondary key
+publisher
+string
+secondary key
+year
+int
+normal key
+language
+string
+normal key
+pages
+int
+normal key
+price
+float
+normal key
+
+
+2
+books
+Into the Wild1
+John
+Editora1
+1991
+pt_BR
+60
+25.0
+
+
+2
+books
+Into the Wild2
+John
+Editora2
+1991
+pt_BR
+60
+25.0
+
+
+2
+books
+Into the Wild3
+John
+Editora1
+1991
+pt_BR
+60
+25.0
+
+
+2
+books
+Into the Wild4
+John
+Editora2
+1991
+en_US
+60
+25.0
+
+
+2
+books
+Into the Wild5
+John
+Editora1
+1991
+en_US
+60
+25.0
+
+
+2
+books
+Introduction to Algorithms1
+Cormen
+Editora1
+1990
+pt_BR
+800
+99.9
+
+
+2
+books
+Introduction to Algorithms2
+Cormen
+Editora2
+1990
+pt_BR
+800
+99.9
+
+
+2
+books
+Introduction to Algorithms3
+Cormen
+Editora1
+1990
+pt_BR
+800
+99.9
+
+
+2
+books
+Introduction to Algorithms4
+Cormen
+Editora2
+1990
+en_US
+800
+99.9
+
+
+2
+books
+Introduction to Algorithms5
+Cormen
+Editora1
+1990
+en_US
+800
+99.9
+
+
+2
+books
+File Structures
+Folk
+Editora1
+1990
+en_US
+500
+79.9
+
+
+2
+books
+Biblia
+Anybody
+Editora2
+0
+pt_BR
+666
+10
+
+
+0

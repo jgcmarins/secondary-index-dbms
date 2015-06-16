@@ -287,7 +287,7 @@ void findMultipleFields(Database *db, int op) {
 ArrayList *readMultiplesFields(SelectionHandler *sh) {
 	ArrayList *index = newArrayList();
 	while(1) {
-		printf("Insert field name: ");
+		printf("Insert field name (if done, hit <ENTER>): ");
 		char *input = inputReader();
 		if(input[0] == '\0') {
 			free(input);
