@@ -49,4 +49,8 @@ void browseOneAtATime(Database *db);
 
 void browseByField(Database *db);
 
+void matchMultipleFields(Database *db);
+
+ArrayList *readMultiplesFields();
+
 #endif

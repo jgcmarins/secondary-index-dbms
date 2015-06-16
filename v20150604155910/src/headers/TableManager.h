@@ -53,4 +53,6 @@ ArrayList *selectAllFromTable(TableManager *tm, char *tableName);
 
 ArrayList *selectBySecondaryIndexFromTable(TableManager *tm, char *tableName, int position, SecondaryIndex *si);
 
+ArrayList *match(SelectionHandler *sh, ArrayList *index);
+
 #endif

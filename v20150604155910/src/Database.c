@@ -237,3 +237,68 @@ void browseByField(Database *db) {
 	} else printf("Table does not exists.\n");
 	free(tableName);
 }
+
+void matchMultipleFields(Database *db) {
+	printf("Insert table name: ");
+	char *tableName = inputReader();
+	SelectionHandler *sh = getSelectionHandler(db->tm, tableName);
+	if(sh != NULL) {
+		displayFields(sh->t);
+		ArrayList *index = readMultiplesFields(sh);
+		ArrayList *records = match(sh, index);
+
+		ArrayList *names = buildTableHeader(sh->t);
+		TableView *tv = newTableView(names);
+		printTableHeader(tv);
+		printRows(tv, sh->t, records);
+
+		while(records->length > 0) {
+			ArrayList *record = (ArrayList *) getArrayListObject(records, records->length - 1);
+			removeArrayListObjectFromPosition(records, records->length - 1);
+			deleteArrayList(record);
+		}
+		deleteArrayList(records);
+
+		while(index->length > 0) {
+			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, index->length - 1);
+			removeArrayListObjectFromPosition(index, index->length - 1);
+			deleteSecondaryIndex(si);
+		}
+		deleteArrayList(index);
+
+		while(names->length > 0) removeArrayListObjectFromPosition(names, names->length - 1);
+		deleteArrayList(names);
+
+		deleteTableView(tv);
+	} else printf("Table does not exists.\n");
+	free(tableName);
+}
+
+
+ArrayList *readMultiplesFields(SelectionHandler *sh) {
+	ArrayList *index = newArrayList();
+	while(1) {
+		printf("Insert field name: ");
+		char *input = inputReader();
+		if(input[0] == '\0') {
+			free(input);
+			break;
+		}
+
+		int position = indexOfField(sh->t->sih, input);
+		if(position != -1) {
+			printf("Insert value: ");
+			char *value = inputReader();
+			SecondaryIndex *si = createTemporarySecondaryIndex(sh->t->sih, position, value);
+			ArrayList *keys = searchSecondaryKey(sh->t->sih, position, si);
+			setArrayListObject(index, keys, index->length);
+			deleteSecondaryIndex(si);
+			free(value);
+		} else printf("Field does not apply.\n");
+
+
+		free(input);
+	}
+
+	return index;
+}

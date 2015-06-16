@@ -379,6 +379,13 @@ int compareStringSecondaryIndex(void *o1, void *o2) {
 	return compareString(si1->value, si2->value);
 }
 
+int compareSecondaryIndexByRecordOffset(void *o1, void *o2) {
+	SecondaryIndex *si1 = (SecondaryIndex *) o1;
+	SecondaryIndex *si2 = (SecondaryIndex *) o2;
+
+	return (si1->recordOffset - si2->recordOffset);
+}
+
 SecondaryIndex *selectSecondaryIndex(BinaryFile *bf, long offset, char* type) {
 	BinaryFileReader *bfr = newBinaryFileReader(bf, DELIMITER);
 	void *p = NULL;

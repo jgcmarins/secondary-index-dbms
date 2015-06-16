@@ -176,3 +176,44 @@ ArrayList *selectBySecondaryIndexFromTable(TableManager *tm, char *tableName, in
 	SelectionHandler *sh = getSelectionHandler(tm, tableName);
 	return selectBySecondaryIndex(sh, position, si);
 }
+
+ArrayList *match(SelectionHandler *sh, ArrayList *index) {
+	ArrayList *result = newArrayList();
+	ArrayList *offsets = newArrayList();
+	int i, j, k, l;
+	for(i = 0 ; i < index->length ; i++) {
+		for(j = i ; j < index->length - 1 ; j++) {
+			ArrayList *i1 = (ArrayList *) getArrayListObject(index, j);
+			ArrayList *i2 = (ArrayList *) getArrayListObject(index, j + 1);
+			for(k = 0 ; k < i1->length ; k++) {
+				for(l = 0 ; l < i2->length ; l++) {
+					SecondaryIndex *si1 = (SecondaryIndex *) getArrayListObject(i1, k);
+					SecondaryIndex *si2 = (SecondaryIndex *) getArrayListObject(i2, l);
+					if(!compareSecondaryIndexByRecordOffset(si1, si2)) {
+						long recordOffset = si1->recordOffset;
+						long *p = (long *) malloc(sizeof(long));
+						memcpy(p, &recordOffset, sizeof(long));
+						int position = indexOfArrayListObject(offsets, p, compareLong);
+						if(position == -1) setArrayListObject(offsets, p, offsets->length);
+						else free(p);
+					}
+				}
+			}
+		}
+	}
+
+	for(i = 0 ; i < offsets->length ; i++) {
+		long *recordOffset = (long *) getArrayListObject(offsets, i);
+		ArrayList *record = selectByOffset(sh, *recordOffset);
+		setArrayListObject(result, record, result->length);
+	}
+
+	while(offsets->length > 0) {
+		long *p = (long *) getArrayListObject(offsets, offsets->length - 1);
+		removeArrayListObjectFromPosition(offsets, offsets->length - 1);
+		free(p);
+	}
+	deleteArrayList(offsets);
+
+	return result;
+}

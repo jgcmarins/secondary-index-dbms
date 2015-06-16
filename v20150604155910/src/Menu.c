@@ -37,6 +37,8 @@ void printMenu() {
 	printf("3. Browse all from table\n");
 	printf("4. Browse one at time from table\n");
 	printf("5. Browse by field\n");
+	printf("6. Match and Browse multiples fields\n");
+	printf("7. Merge and Browse multiples fields\n");
 	printf("0. Save and quit\n");
 
 
@@ -55,6 +57,10 @@ void switchOperation(int op, Database *db) {
 		case 4: browseOneAtATime(db);
 				break;
 		case 5: browseByField(db);
+				break;
+		case 6: matchMultipleFields(db);
+				break;
+		case 7:
 				break;
 		default:	printf("Invalid operation.\n");
 	}

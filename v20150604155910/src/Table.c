@@ -67,25 +67,15 @@ void buildSecondaryIndex(Table *t) {
 		seekBinaryFile(bfFiles, 0L);
 
 		while(getStreamOffset(bfFiles) < getBinaryFileSize(bfFiles)) { // each secondary index
-			//printf("1.Checando offset \"%ld\" do arquivos \"%s\"\n", getStreamOffset(bfFiles), bfFiles->fileName);
 			SecondaryIndex *si = selectSecondaryIndex(bfFiles, getStreamOffset(bfFiles), f->type);
 			addIndex(t->sih, si, i);
 
 			while(si->nextOffset != -1) { // each duplicated
 				BinaryFile *bfLists = (BinaryFile *) getArrayListObject(t->sih->invertedLists, i);
-				//printf("2.Checando offset \"%ld\" do arquivos \"%s\"\n", si->nextOffset, bfLists->fileName);
 				si = selectSecondaryIndex(bfLists, si->nextOffset, f->type);
 				addIndex(t->sih, si, i);
 			}
 		}
-
-		/*printf("montando:\n");
-		ArrayList *index = (ArrayList *) getArrayListObject(t->sih->index, i);
-		int k;
-		for(k = 0 ; k < index->length ; k++) {
-			SecondaryIndex *si = (SecondaryIndex *) getArrayListObject(index, k);
-			printf("\"%s\"\n", (char *) si->value);
-		}*/
 	}
 }
 
