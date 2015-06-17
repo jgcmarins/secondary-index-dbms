@@ -27,7 +27,6 @@ void deleteDeletionHandler(DeletionHandler *dh) {
 
 void deleteByOffset(DeletionHandler *dh, long offset) {
 	long head = readLong(dh->bfr, 0L); // read head
-	printf("head: %ld\n", head);
 
 	seekBinaryFile(dh->bfr->bf, offset); // point to offset
 	int size = readInt(dh->bfr, getStreamOffset(dh->bfr->bf));
