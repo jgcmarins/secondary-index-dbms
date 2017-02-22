@@ -39,6 +39,6 @@ cleanfiles:
 	rm -rf files
 	mkdir files
 runin1:
-	$(BIN) < in/1
+	$(BIN) < in/1.in
 valgrindin1:
-	valgrind $(BIN) < in/1
+	valgrind $(BIN) < in/1.in
